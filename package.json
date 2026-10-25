@@ -1,0 +1,58 @@
+{
+  "name": "palette-swap",
+  "version": "1.0.3",
+  "private": true,
+  "description": "Palette-Swap Minecraft texture editor for Windows",
+  "main": "main.cjs",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder",
+    "dist:win": "electron-builder --win nsis",
+    "release:win": "electron-builder --win nsis --publish always"
+  },
+  "devDependencies": {
+    "electron": "^45.0.0",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "jp.minekoubou.texturestudio",
+    "productName": "Palette-Swap",
+    "artifactName": "${productName}-Setup-${version}.${ext}",
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "sirotumekuma",
+        "repo": "Palette-Swap",
+        "releaseType": "release"
+      }
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.cjs",
+      "preload.cjs",
+      "favicon.ico",
+      "マイクラ テクスチャ工房.html",
+      "textures/**/*.png",
+      "package.json"
+    ],
+    "win": {
+      "icon": "favicon.ico",
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Palette-Swap",
+      "uninstallDisplayName": "Palette-Swap",
+      "language": "1041",
+      "installerLanguages": "ja_JP"
+    }
+  },
+  "dependencies": {
+    "electron-updater": "^6.8.11"
+  }
+}

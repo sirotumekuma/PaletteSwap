@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Palette-Swap</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f3f0e8;--fg:#222;--card:#fff;--bd:#d6d0c2;--ac:#3b8f3b;--mut:#6b675c}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1b1d1a;--fg:#ececec;--card:#262925;--bd:#3c413a;--ac:#6fcf6f;--mut:#a5a89f}}
+:root[data-theme="dark"]{--bg:#1b1d1a;--fg:#ececec;--card:#262925;--bd:#3c413a;--ac:#6fcf6f;--mut:#a5a89f}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,-apple-system,"Hiragino Sans","Noto Sans JP",sans-serif}
+main{max-width:1280px;margin:0 auto;padding:16px}
+h1{font-size:22px;margin:4px 0}.sub{color:var(--mut);margin:0 0 14px}
+.wrap{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px}
+.wrap>.card:first-child{flex:2 1 420px}
+.col{flex:1 1 320px;min-width:280px;display:flex;flex-direction:column;gap:14px}
+#cv{width:100%;max-width:640px;aspect-ratio:1;image-rendering:pixelated;touch-action:none;display:block;border:1px solid var(--bd);cursor:crosshair}
+.row{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;align-items:center}
+button{font:inherit;color:inherit;background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:5px 10px;cursor:pointer}
+button:disabled{opacity:.4;cursor:default}
+select{font:inherit;color:inherit;background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:4px}
+button.on{border-color:var(--ac);box-shadow:0 0 0 2px var(--ac) inset}
+button.pri{background:var(--ac);color:#fff;border-color:var(--ac)}
+h2{font-size:14px;margin:0 0 8px;color:var(--mut)}
+.slot{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:12px;padding:4px 6px}
+.slot i{width:30px;height:22px;border:1px solid #0006;border-radius:4px;display:block}
+#prev{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px}
+.pv{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px;padding:6px}
+.pv canvas{width:64px;height:64px;image-rendering:pixelated;background:repeating-conic-gradient(#bbb 0 25%,#ddd 0 50%) 0 0/16px 16px}
+#colors{display:flex;flex-wrap:wrap;gap:8px;font-size:12px}#colors label{display:flex;align-items:center;gap:4px}
+input[type=text]{font:inherit;color:inherit;background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:4px 8px;width:130px}
+#msg{min-height:20px;font-size:13px;color:var(--mut);margin-top:6px}
+
+button{padding:7px 13px}
+.grp{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid var(--bd)}
+#tools .grp:first-child{margin-top:14px}
+.gl{font-size:12px;font-weight:600;color:var(--mut);min-width:78px}
+.cur{font-size:16px;margin-bottom:10px}.cur b{color:var(--ac)}.cur small,.hint{color:var(--mut);font-size:12px}
+.hint{margin:10px 0 0}.mv{display:inline-flex;gap:4px;align-items:center;margin-left:8px}.mv button{padding:7px 11px}
+button.on{background:color-mix(in srgb,var(--ac) 22%,var(--card));font-weight:600}
+h2{font-size:15px;color:var(--fg)}
+.slot i{width:38px;height:28px}.slot{font-size:12px;padding:6px 8px}
+#prev{grid-template-columns:repeat(auto-fill,minmax(96px,1fr))}.pv canvas{width:80px;height:80px}.pv{font-size:13px}
+.card{padding:16px}.wrap{gap:18px}.col{gap:18px}
+*{box-sizing:border-box}
+:root{--bg:#202124;--fg:#e4e4e4;--card:#292a2d;--bd:#414247;--ac:#75a7ff;--mut:#a5a6ac;color-scheme:dark}
+body{background:#202124;color:var(--fg);font-size:13px;line-height:1.45}
+main{max-width:none;padding:0}
+.appbar{height:54px;display:flex;align-items:center;gap:18px;padding:0 18px;background:#292a2d;border-bottom:1px solid #3c3d41}
+.appbrand{display:flex;align-items:center;gap:10px;font-weight:650;font-size:15px;white-space:nowrap}
+.appmark{display:grid;place-items:center;width:30px;height:30px;border-radius:8px;background:#416bb5;color:#fff}
+.appbar nav{display:flex;gap:5px;color:#bfc0c5}
+.appbar nav span{padding:6px 10px;border-radius:5px}
+.appbar nav span:first-child{background:#3a3b40;color:#fff}
+.appstatus{margin-left:auto;color:#aeb0b6;font-size:12px}
+.app-update{display:flex;align-items:center;gap:8px;white-space:nowrap}
+.app-update button{font-size:11px;padding:5px 8px}
+.app-update-status{max-width:240px;overflow:hidden;text-overflow:ellipsis}
+.docbar{height:32px;display:flex;align-items:stretch;overflow:auto;background:#454545;border-bottom:1px solid #303030;color:#e2e2e2;font-size:11px}
+.doc-tab{height:100%;display:flex;align-items:center;gap:14px;padding:0 12px;background:#5c5c5c;border-right:1px solid #404040;white-space:nowrap;cursor:pointer}
+.doc-tab.active{background:#737373;box-shadow:inset 0 2px #9fc4e3}
+.doc-close,.doc-add{border:0;border-radius:0;background:transparent;padding:0 8px;color:#ddd}
+.doc-close:hover,.doc-add:hover{background:#747474}
+.doc-add{position:sticky;right:0;width:34px;flex:none;font-size:18px}
+h1{display:none}
+.sub{display:none}
+.wrap{display:grid;grid-template-columns:34px 220px minmax(400px,1fr) 280px;gap:0;height:calc(100vh - 86px);align-items:stretch}
+.wrap>.card:first-child{flex:auto;min-width:0}
+.card{background:#515151;border:0;border-radius:0;padding:12px}
+.ed{background:#606060;border-left:1px solid #3b3c40;border-right:1px solid #3b3c40;overflow:auto}
+.col{min-width:0;overflow:auto;gap:0}
+.col>.card{border-bottom:1px solid #414141}
+h2{font-size:12px;font-weight:650;letter-spacing:.02em;margin:0 0 11px;color:#d7d8dd}
+.cur{font-size:13px;margin-bottom:12px}.cur small{display:block;margin-top:2px;color:var(--mut)}
+#cv{max-width:720px;margin:24px auto 0;background:#fff;border-color:#262626;box-shadow:0 2px 10px #0005}
+button,select,input[type=text],input[type=search]{color:#f1f1f1;background:#444;border:1px solid #626262;border-radius:3px}
+button{padding:6px 9px}
+button:hover{background:#5e5e5e;border-color:#858585}
+button.on{background:#4b78a8;border-color:#a8c9e8;box-shadow:0 0 0 1px #a8c9e8 inset}
+button.pri{background:#5b89b5;border-color:#8cb0d0}
+.grp{gap:5px;margin-top:9px;padding-top:9px;border-color:#3d3e43}
+.gl{min-width:72px;color:#b5b6bc}
+.slot{background:#444}
+.slot i{width:32px;height:24px}
+#prev{grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:5px}
+.pv{font-size:11px;padding:5px}
+.pv canvas{width:54px;height:54px}
+#colors{font-size:11px;gap:7px}
+input[type=text],input[type=search]{padding:7px 9px}
+#library{display:flex;flex-direction:column;min-width:0;overflow:hidden;background:#505050;border-right:1px solid #414141}
+.library-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.library-count{font-size:11px;color:#9b9da4}
+#assetCount{white-space:nowrap}
+#assetSearch{width:100%;margin-bottom:8px}
+#assetCategory{width:100%;margin-bottom:8px}
+#assetList{overflow:auto;display:flex;flex-direction:column;gap:3px}
+.asset-entry{display:flex;align-items:center;gap:9px;text-align:left;width:100%;padding:7px 8px;background:transparent;border-color:transparent;color:#e7e7e7}
+.asset-entry:hover,.asset-entry.on{background:#666;border-color:#808080}
+.asset-icon{display:grid;place-items:center;width:30px;height:30px;border-radius:3px;background:#626262;font-size:15px;flex:none}
+.asset-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#assetEmpty{padding:16px 5px;color:var(--mut);font-size:12px}
+#msg{font-size:11px;overflow-wrap:anywhere}
+.hint{font-size:11px}
+.toolrail{display:flex;flex-direction:column;align-items:center;gap:4px;padding:7px 3px;background:#4d4d4d;border-right:1px solid #3c3c3c}
+.toolrail button{width:27px;height:27px;padding:0;font-size:14px;background:transparent;border-color:transparent}
+.toolrail .tool-split{height:1px;width:20px;background:#777;margin:4px 0}
+.variant-sync{display:flex;align-items:center;gap:6px;margin:0 0 8px;color:#d9d9d9;font-size:11px}
+.variant-sync input{margin:0}
+.sidegroup{padding:9px 0;border-bottom:1px solid #414141}
+.sidegroup h2{margin:0 9px 7px;font-size:11px}
+.side-shortcuts{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:0 7px}
+.side-shortcuts button{min-width:0;font-size:11px;text-align:left}
+.appbar{background:#484848;border-color:#353535}
+.appbar nav span:first-child{background:#5c5c5c}
+.appmark{background:#dc8738}
+.appstatus{color:#c9c9c9}
+.library-count{color:#ddd}
+.ed>.cur{padding:0 4px}
+.ed>#tools{max-width:850px;margin:0 auto}
+#library>.library-head{margin-top:6px}
+#library .sidegroup input,#library .sidegroup select{width:calc(100% - 14px);margin:0 7px 5px}
+#layers{padding:10px 13px 14px;background:#505050}
+.layer-row{display:flex;align-items:center;gap:8px;padding:7px 6px;background:#626262;border:1px solid #777;font-size:12px}
+.layer-eye{color:#dedede}
+.layer-thumb{width:22px;height:22px;background:#fff;border:1px solid #bbb}
+.panel-tabs{display:flex;gap:14px;margin:-12px -12px 12px;padding:7px 12px;border-bottom:1px solid #414141;font-size:11px;color:#d9d9d9}
+.panel-tabs span:first-child{font-weight:700;color:white;border-bottom:2px solid #9fc4e3}
+@media(max-width:1100px){.wrap{grid-template-columns:30px 200px minmax(360px,1fr);height:auto;min-height:calc(100vh - 86px)}.col{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));overflow:visible}.ed{border-right:0}}
+@media(max-width:720px){.appbar nav{display:none}.wrap{display:flex;flex-direction:column;height:auto}.toolrail{flex-direction:row;overflow:auto}.toolrail .tool-split{height:20px;width:1px}.wrap>#library{height:300px}.wrap>.ed,.wrap>.col{width:100%}.col{display:flex}.ed{border:0;border-top:1px solid #3b3c40}.appstatus{font-size:10px}}
+</style></head><body><main>
+<header class="appbar"><div class="appbrand"><span class="appmark">✦</span>Palette-Swap</div><nav><span>ファイル</span><span>編集</span><span>オブジェクト</span><span>選択</span><span>効果</span><span>表示</span><span>ウィンドウ</span><span>ヘルプ</span></nav><div class="app-update"><span id="updateStatus" class="app-update-status">更新を確認できます</span><button id="updateButton" type="button">更新を確認</button></div><div class="appstatus">16 × 16 px · Minecraft Java版</div></header>
+<div class="docbar" id="docTabs" role="tablist" aria-label="開いているテクスチャ"></div>
+<h1>⛏️ Palette-Swap</h1>
+<p class="sub">グリッドは1つだけ描けばOK。輪郭から光までの7段階の明るさで塗ると、全素材の色が自動で当てはまります。</p>
+<div class="wrap">
+ <aside class="toolrail" id="toolrail" aria-label="ツール">
+  <button data-t="pen" title="ペン (P)">✎</button><button data-t="eraser" title="消しゴム (E)">⌫</button><button data-t="dropper" title="スポイト (I)">◉</button><button data-t="fill" title="塗りつぶし (F)">▧</button>
+  <span class="tool-split"></span><button data-t="line" title="直線 (L)">╱</button><button data-t="rect" title="四角 (R)">□</button><button data-t="frect" title="塗り四角">▣</button><button data-t="oval" title="円">◯</button>
+  <span class="tool-split"></span><button data-t="sel" title="範囲選択 (S)">⬚</button>
+  <span class="tool-split"></span>
+  <button data-o="copy" title="選択範囲をコピー" aria-label="選択範囲をコピー">▢</button><button data-o="cut" title="選択範囲を切り取り" aria-label="選択範囲を切り取り">✂</button><button data-o="paste" title="選択範囲を貼り付け" aria-label="選択範囲を貼り付け">▣</button><button data-o="del" title="選択範囲を削除" aria-label="選択範囲を削除">⌫</button>
+  <button data-o="fh" title="選択範囲を左右反転" aria-label="選択範囲を左右反転">↔</button><button data-o="fv" title="選択範囲を上下反転" aria-label="選択範囲を上下反転">↕</button><button data-o="rot" title="選択範囲を90°回転" aria-label="選択範囲を90°回転">⟳</button>
+  <button data-o="up" title="選択範囲を1段明るく" aria-label="選択範囲を1段明るく">☼</button><button data-o="dn" title="選択範囲を1段暗く" aria-label="選択範囲を1段暗く">◐</button><button data-o="all" title="全選択" aria-label="全選択">▣</button><button data-o="none" title="選択を解除" aria-label="選択を解除">⊘</button>
+ </aside>
+ <aside class="card" id="library">
+  <div class="sidegroup"><h2>ツール</h2><div class="side-shortcuts"><button data-side="undo">↶ 戻す</button><button data-side="redo">↷ やり直す</button><button data-side="new-tab">＋ 新規タブ</button><button data-side="import">↑ 読み込み</button></div></div>
+  <div class="library-head"><h2>テクスチャ素材</h2><span id="assetCount" class="library-count">読込中</span></div>
+  <input type="search" id="assetSearch" placeholder="素材名で検索…">
+  <select id="assetCategory" aria-label="素材カテゴリ">
+   <option value="all">すべてのテクスチャ</option><option value="blocks">ブロック</option><option value="armor">防具</option><option value="sword">剣</option><option value="pickaxe">つるはし</option><option value="axe">斧</option><option value="shovel">シャベル</option><option value="hoe">クワ</option><option value="otherTools">その他の道具・武器</option><option value="items">その他のアイテム</option><option value="food">食べ物</option><option value="entity">エンティティ</option><option value="environment">環境</option><option value="interface">GUI・フォント</option><option value="other">その他</option>
+  </select>
+  <div id="assetList" role="listbox" aria-label="Minecraftテクスチャ"></div>
+  <div id="assetEmpty" hidden>一致するテクスチャがありません</div>
+ </aside>
+ <section class="card ed">
+  <div class="cur">編集中のテクスチャ: <b id="curm"></b> <small id="assetSource">(素材ライブラリから画像を選択)</small></div>
+  <canvas id="cv" width="640" height="640"></canvas>
+  <div id="tools">
+   <div class="grp"><span class="gl">描く</span><button data-t="pen" class="on" title="P">✏️ ペン</button><button data-t="eraser" title="E">🧽 消しゴム</button><button data-t="fill" title="F">🪣 塗りつぶし</button><button data-t="dropper" title="I">💧 スポイト</button><button data-t="rep">🔁 同色置換</button></div>
+   <div class="grp"><span class="gl">図形・選択</span><button data-t="line" title="L">╱ 直線</button><button data-t="rect" title="R">▭ 四角</button><button data-t="frect">▮ 塗り四角</button><button data-t="oval">◯ 円</button><button data-t="sel" title="S">⬚ 範囲選択</button></div>
+   <div class="grp"><span class="gl">操作</span><button id="un">↶ 戻す</button><button id="re">↷ やり直し</button><span class="mv">移動 <button data-m="-1,0">←</button><button data-m="0,-1">↑</button><button data-m="0,1">↓</button><button data-m="1,0">→</button></span></div>
+   <div class="grp"><span class="gl">設定</span><label><input type="checkbox" id="mir"> 左右対称</label><label><input type="checkbox" id="mirY"> 上下対称</label><label><input type="checkbox" id="grd" checked> グリッド</label><label>太さ <select id="bs"><option>1</option><option>2</option><option>3</option></select></label></div>
+  </div>
+  <div class="grp" id="presets"><span class="gl">テンプレート</span><button data-p="sword">⚔️ 剣</button><button data-p="pick">⛏️ ツルハシ</button><button data-p="axe">🪓 斧</button><button data-p="shovel">🥄 シャベル</button><button data-p="hoe">🌾 クワ</button><button data-p="spear">🔱 槍</button><button data-p="blank">⬜ 白紙</button></div>
+  <div class="grp"><span class="gl">PNG読み込み</span><input type="file" id="fi" accept="image/*"><select id="im"><option value="near">選択中の素材の色に合わせる</option><option value="auto">色を自動抽出して新素材にする</option></select></div>
+  <p class="hint">ドラッグ&amp;ドロップでも読み込めます ／ 数字キー1〜7で色の番号 ／ 矢印キーで移動 ／ Escで選択解除</p>
+ </section>
+ <div class="col">
+  <section class="card"><h2>描く色(選択中の素材で表示)</h2><div class="row" id="slots" style="margin-top:0"></div>
+   <div id="colors" class="row"></div></section>
+  <section class="card"><div class="panel-tabs"><span>カラー</span><span>スウォッチ</span><span>ブラシ</span></div><h2 id="variantTitle">素材バリエーション</h2><div id="variantNote" class="library-count"></div><label id="variantSyncControl" class="variant-sync"><input type="checkbox" id="variantSync" checked> ピクセル編集を同期</label><div id="prev"></div>
+  <div class="row"><button id="addm">＋ 素材を追加(選択中をコピーして自由に色変更)</button><button id="delm">このカスタム素材を削除</button></div></section>
+  <section class="card"><h2>保存(Java版リソースパック向け・16×16 PNG)</h2>
+   <div class="row" style="margin-top:0">アイテム名: <input type="text" id="name" value="sword"></div>
+   <div class="row">pack_format: <input type="text" id="pf" value="55" style="width:60px"> <small>(遊ぶバージョンに合わせて変更)</small></div>
+   <div class="row" id="saves" hidden>
+    <button class="pri" id="s1">選択中の素材をPNG保存</button>
+    <button class="pri" id="sz">全素材をZIP保存</button>
+   </div>
+   <div id="msg">ZIPは assets/minecraft/textures/item/ の階層で入ります。</div></section>
+  <section class="card" id="layers"><div class="panel-tabs"><span>レイヤー</span><span>アートボード</span></div><h2>編集レイヤー</h2><div class="layer-row"><span class="layer-eye">◉</span><span class="layer-thumb"></span><span id="layerName">テクスチャ画像</span><span>●</span></div><p class="library-count">ピクセル編集 · 16 × 16 px</p></section>
+ </div>
+</div>
+</main>
+<script>
+const N=16,$=s=>document.querySelector(s);
+const MATS=[
+["wooden","木",["#3a2810","#6b4a1f","#9a6f35","#c29a5a","#dcc08a"]],
+["stone","石",["#2e2e2e","#5a5a5a","#7e7e7e","#a3a3a3","#c4c4c4"]],
+["iron","鉄",["#2a2d33","#6b7078","#9aa0a8","#cfd3d8","#f2f4f5"]],
+["golden","金",["#5a3d00","#b8860b","#e8b923","#f9dc5c","#fff4b0"]],
+["diamond","ダイヤ",["#0b3b3d","#1f9e9a","#33ebcb","#7ff5e0","#d6fff8"]],
+["netherite","ネザライト",["#1b171a","#3a3338","#4f464b","#6f656b","#8e8389"]],
+["copper","銅",["#3d1f12","#8a4528","#c0693a","#e8996a","#ffd0a8"]],
+["custom","カスタム",["#222222","#555555","#888888","#bbbbbb","#eeeeee"]]];
+const HAND=["#281e0b","#493615","#684e1e","#896727"],LAB=["輪郭","暗","やや暗","中","明","やや明","光","柄1","柄2","柄3","柄4"];
+const ARMOR_TYPES=[["leather","革"],["chainmail","チェーン"],["iron","鉄"],["golden","金"],["diamond","ダイヤ"],["netherite","ネザライト"]];
+const hx=h=>[1,3,5].map(i=>parseInt(h.substr(i,2),16)),
+ ex=p=>Array.from({length:7},(_,i)=>{const t=i*4/6,k=Math.min(3,Math.floor(t)),f=t-k,a=hx(p[k]),b=hx(p[k+1]);return"#"+a.map((v,j)=>Math.round(v+(b[j]-v)*f).toString(16).padStart(2,"0")).join("")});
+const PAL={wooden:["#20180a","#372910","#473614","#594319","#866526","#594319","#755821"],stone:["#212121","#494949","#5a5a5a","#787777","#b3b1af","#787777","#95918d"],iron:["#181818","#444444","#6b6b6b","#969696","#bebebe","#d8d8d8","#ffffff"],golden:["#3f2e0e","#825d16","#dc9613","#e9b115","#eaee57","#fdff76","#ffffff"],diamond:["#082520","#0e3f36","#156355","#1e8a77","#2bc7ac","#33ebcb","#a4fdf0"],netherite:["#231012","#4a2940","#5d565d","#706770","#51444e","#4f3c3e","#867b86"],copper:["#421c11","#5f2c1c","#803921","#9c4e31","#e3826c","#fc9982","#fdd4cb"]},EXC={wooden:{30:"#866526",76:"#755821",91:"#755821",106:"#755821",135:"#755821"},stone:{30:"#b3b1af",76:"#95918d",91:"#95918d",106:"#95918d",135:"#95918d"},netherite:{45:"#706770",74:"#706770",76:"#706770",89:"#5d565d",91:"#5d565d",104:"#51444e",105:"#322727",119:"#51444e",120:"#322727",133:"#4a2940",135:"#322727",150:"#322727",166:"#51444e",179:"#2f2122",180:"#603432",182:"#4f3c3e",183:"#322727",194:"#2f2122",195:"#734543",196:"#231012",200:"#322727",210:"#3b393b",211:"#231012",225:"#322727",240:"#160814"}};
+const PK=["................","................","......BBBBB.....",".....BFEEEEBij..","......BAAAEEkh..","..........iEEA..",".........ijhEEA.","........ikh.AEA.",".......ijh..AEA.","......ikh...AEA.",".....ijh....AFA.","....ikh......A..","...ijh..........","..ikh...........","..hh............","................"].map(r=>[...r].map(c=>".ABCDEFGhijk".indexOf(c))),EXP={wooden:{54:"#886626",55:"#755821",56:"#6a501e",57:"#6a501e",58:"#755821",61:"#6a501e",74:"#6a501e",75:"#6a501e",76:"#886626",91:"#755821",92:"#6a501e",106:"#6a501e",108:"#6a501e",109:"#755821",121:"#886626",125:"#6a501e",136:"#6a501e",141:"#6a501e",151:"#886626",157:"#755821",166:"#6a501e",173:"#886626",181:"#886626",196:"#6a501e",211:"#886626"},stone:{54:"#9a9a9a",55:"#898989",56:"#7f7f7f",57:"#7f7f7f",58:"#898989",71:"#181818",72:"#181818",73:"#181818",74:"#7f7f7f",75:"#7f7f7f",91:"#898989",92:"#7f7f7f",93:"#181818",108:"#7f7f7f",109:"#898989",110:"#181818",124:"#181818",125:"#7f7f7f",126:"#181818",140:"#181818",141:"#7f7f7f",142:"#181818",156:"#181818",157:"#898989",158:"#181818",172:"#181818",173:"#9a9a9a",174:"#181818",189:"#181818"},iron:{54:"#ffffff",55:"#d8d8d8",56:"#c1c1c1",57:"#c1c1c1",58:"#d8d8d8",74:"#c1c1c1",75:"#c1c1c1",91:"#d8d8d8",92:"#c1c1c1",108:"#c1c1c1",109:"#d8d8d8",125:"#c1c1c1",141:"#c1c1c1",157:"#d8d8d8",173:"#ffffff"},golden:{56:"#e9b115",57:"#e9b115",74:"#e9b115",75:"#e9b115",92:"#e9b115",108:"#e9b115",125:"#e9b115",141:"#e9b115"},diamond:{56:"#27b29a",57:"#27b29a",74:"#27b29a",75:"#27b29a",92:"#27b29a",108:"#27b29a",125:"#27b29a",141:"#27b29a"},netherite:{54:"#867b86",55:"#867b86",56:"#867b86",57:"#706770",58:"#5d565d",60:"#4a2940",61:"#2f2122",74:"#4f3c3e",75:"#5d565d",76:"#734543",77:"#231012",90:"#2f2122",91:"#4f3c3e",92:"#5d565d",105:"#2f2122",106:"#603432",107:"#231012",108:"#4f3c3e",109:"#5d565d",120:"#2f2122",121:"#734543",122:"#231012",125:"#706770",135:"#2f2122",136:"#603432",137:"#231012",141:"#867b86",150:"#2f2122",151:"#734543",152:"#231012",157:"#867b86",165:"#2f2122",166:"#3b393b",167:"#231012",173:"#867b86",180:"#2f2122",181:"#434043",182:"#231012",195:"#2f2122",196:"#3b393b",197:"#231012",210:"#2f2122",211:"#734543",212:"#231012",226:"#231012",227:"#231012"},copper:{56:"#d66d48",57:"#d66d48",74:"#d66d48",75:"#d66d48",92:"#d66d48",108:"#d66d48",125:"#d66d48",141:"#d66d48"}};
+const AX=["................",".........BB.....","........BFFB....",".......BFEEB....","......BFEEEij...","......AFEEDEh...",".......AAiEDEA..","........ijhEEA..",".......ikh.AA...","......ijh.......",".....ijh........","....ikh.........","...ijh..........","..ikh...........","..hh............","................"].map(r=>[...r].map(c=>".ABCDEFGhijk".indexOf(c))),EXA={wooden:{41:"#866526",42:"#866526",56:"#866526",57:"#6b511f",58:"#755821",71:"#866526",72:"#6b511f",73:"#6b511f",74:"#6b511f",87:"#866526",88:"#755821",89:"#6b511f",91:"#6b511f",106:"#6b511f",108:"#6b511f",123:"#6b511f",124:"#6b511f"},stone:{41:"#9a9a9a",42:"#9a9a9a",56:"#9a9a9a",57:"#7f7f7f",58:"#898989",71:"#9a9a9a",72:"#7f7f7f",73:"#7f7f7f",74:"#7f7f7f",86:"#181818",87:"#9a9a9a",88:"#898989",89:"#7f7f7f",90:"#6c6c6c",91:"#7f7f7f",103:"#181818",104:"#181818",106:"#7f7f7f",107:"#6c6c6c",108:"#7f7f7f",109:"#181818",123:"#7f7f7f",124:"#7f7f7f",125:"#181818",139:"#181818",140:"#181818"},iron:{41:"#ffffff",42:"#ffffff",56:"#ffffff",57:"#c1c1c1",58:"#d8d8d8",71:"#ffffff",72:"#c1c1c1",73:"#c1c1c1",74:"#c1c1c1",87:"#ffffff",88:"#d8d8d8",89:"#c1c1c1",91:"#c1c1c1",106:"#c1c1c1",108:"#c1c1c1",123:"#c1c1c1",124:"#c1c1c1"},golden:{57:"#e9b115",72:"#e9b115",73:"#e9b115",74:"#e9b115",89:"#e9b115",90:"#dc9613",91:"#e9b115",106:"#e9b115",107:"#dc9613",108:"#e9b115",123:"#e9b115",124:"#e9b115"},diamond:{57:"#27b29a",72:"#27b29a",73:"#27b29a",74:"#27b29a",89:"#27b29a",91:"#27b29a",106:"#27b29a",108:"#27b29a",123:"#27b29a",124:"#27b29a"},netherite:{41:"#867b86",42:"#867b86",56:"#867b86",57:"#4f3c3e",58:"#4f3c3e",71:"#706770",72:"#4f3c3e",73:"#4f3c3e",74:"#4f3c3e",75:"#5d565d",76:"#603432",87:"#706770",88:"#4f3c3e",89:"#4f3c3e",90:"#5d565d",91:"#4f3c3e",92:"#231012",105:"#5d565d",106:"#4f3c3e",107:"#322727",108:"#4f3c3e",120:"#2f2122",121:"#603432",122:"#231012",123:"#4f3c3e",124:"#4f3c3e",135:"#2f2122",136:"#734543",137:"#231012",150:"#2f2122",151:"#603432",152:"#231012",165:"#2f2122",166:"#434043",167:"#231012",180:"#2f2122",181:"#3b393b",182:"#231012",195:"#2f2122",196:"#434043",197:"#231012",210:"#2f2122",211:"#734543",212:"#231012",226:"#231012",227:"#231012"},copper:{57:"#d66d48",72:"#d66d48",73:"#d66d48",74:"#d66d48",89:"#d66d48",91:"#d66d48",106:"#d66d48",108:"#d66d48",123:"#d66d48",124:"#d66d48"}},SH=["................","................","...........BBA..","..........BFFEA.",".........BFEEFA.","........BFEEEFA.",".........iEEFA..","........ikhFA...",".......ikh.A....","......ijh.......",".....ikh........","....ijh.........","..iikh..........","..ikh...........","...hh...........","................"].map(r=>[...r].map(c=>".ABCDEFGhijk".indexOf(c))),EXS={wooden:{59:"#866526",60:"#866526",61:"#6b511f",74:"#866526",75:"#755821",76:"#6b511f",77:"#866526",89:"#866526",90:"#755821",91:"#6b511f",92:"#755821",93:"#866526",106:"#6b511f",107:"#755821",108:"#866526",123:"#866526"},stone:{45:"#181818",59:"#9a9a9a",60:"#9a9a9a",61:"#7f7f7f",62:"#181818",74:"#9a9a9a",75:"#898989",76:"#7f7f7f",77:"#9a9a9a",78:"#181818",89:"#9a9a9a",90:"#898989",91:"#7f7f7f",92:"#898989",93:"#9a9a9a",94:"#181818",106:"#7f7f7f",107:"#898989",108:"#9a9a9a",109:"#181818",123:"#9a9a9a",124:"#181818",139:"#181818"},iron:{59:"#ffffff",60:"#ffffff",61:"#c1c1c1",74:"#ffffff",75:"#d8d8d8",76:"#c1c1c1",77:"#ffffff",89:"#ffffff",90:"#d8d8d8",91:"#c1c1c1",92:"#d8d8d8",93:"#ffffff",106:"#c1c1c1",107:"#d8d8d8",108:"#ffffff",123:"#ffffff"},golden:{61:"#e9b115",76:"#e9b115",91:"#e9b115",106:"#e9b115"},diamond:{61:"#27b29a",76:"#27b29a",91:"#27b29a",106:"#27b29a"},netherite:{45:"#4a2940",59:"#867b86",60:"#867b86",61:"#867b86",74:"#867b86",75:"#5d565d",76:"#5d565d",77:"#706770",89:"#706770",90:"#5d565d",91:"#4f3c3e",92:"#5d565d",93:"#706770",105:"#2f2122",106:"#4f3c3e",107:"#5d565d",108:"#706770",120:"#2f2122",121:"#734543",122:"#231012",123:"#706770",135:"#2f2122",136:"#734543",137:"#231012",150:"#2f2122",151:"#603432",152:"#231012",165:"#2f2122",166:"#3b393b",167:"#231012",180:"#2f2122",181:"#3b393b",182:"#231012",194:"#2f2122",195:"#2f2122",196:"#434043",197:"#231012",210:"#2f2122",211:"#734543",212:"#231012",227:"#231012",228:"#231012"},copper:{61:"#d66d48",76:"#d66d48",91:"#d66d48",106:"#d66d48"}};
+const SP=[".............BBB","...........BBGGA",".........BBFGGFA",".......BBEGFGFA.",".......BEFGGFDA.","........BFGEDA..","........iGEDDA..",".......ijhADA...","......ikh..AA...",".....ikh........","....ikh.........","...ikh..........","..ikh...........",".ikh............","ikh.............","kh.............."].map(r=>[...r].map(c=>".ABCDEFGhijk".indexOf(c))),EXSP={wooden:{30:"#866526",43:"#755821",45:"#866526",46:"#473614",57:"#594319",59:"#755821",60:"#866526",61:"#473614",72:"#594319",73:"#755821",75:"#866526",76:"#473614",77:"#372910",89:"#755821",90:"#866526",91:"#473614",92:"#372910",105:"#866526",106:"#372910",107:"#372910",108:"#372910",123:"#372910",135:"#684e1e",150:"#684e1e",194:"#67290b",209:"#67290b",210:"#ba5f34",211:"#411805",224:"#67290b",225:"#a34b22",226:"#411805",240:"#a34b22",241:"#411805"},stone:{13:"#444444",14:"#444444",15:"#444444",27:"#444444",28:"#444444",30:"#b3b1af",31:"#181818",41:"#444444",42:"#444444",43:"#95918d",45:"#b3b1af",46:"#6b6b6b",47:"#181818",55:"#444444",56:"#444444",57:"#787777",59:"#95918d",60:"#b3b1af",61:"#6b6b6b",62:"#181818",71:"#444444",72:"#787777",73:"#95918d",75:"#b3b1af",76:"#6b6b6b",77:"#494949",78:"#181818",88:"#444444",89:"#95918d",90:"#b3b1af",91:"#6b6b6b",92:"#494949",93:"#181818",105:"#b3b1af",106:"#494949",107:"#494949",108:"#494949",109:"#181818",122:"#181818",123:"#494949",124:"#181818",139:"#181818",140:"#181818",194:"#67290b",209:"#67290b",210:"#ba5f34",211:"#411805",224:"#67290b",225:"#a34b22",226:"#411805",240:"#a34b22",241:"#411805"},iron:{29:"#d8d8d8",43:"#b1b1b1",44:"#d8d8d8",46:"#6b6b6b",57:"#858585",58:"#d8d8d8",59:"#b1b1b1",61:"#6b6b6b",72:"#858585",73:"#b1b1b1",74:"#d8d8d8",76:"#6b6b6b",77:"#545758",89:"#b1b1b1",91:"#6b6b6b",92:"#545758",106:"#545758",107:"#545758",108:"#545758",123:"#545758",194:"#67290b",209:"#67290b",210:"#ba5f34",211:"#411805",224:"#67290b",225:"#a34b22",226:"#411805",240:"#a34b22",241:"#411805"},golden:{29:"#fdff76",43:"#f4db49",44:"#fdff76",46:"#f4db49",57:"#e9b115",58:"#fdff76",59:"#f4db49",61:"#f4db49",72:"#e9b115",73:"#f4db49",74:"#fdff76",76:"#f4db49",77:"#dc9613",89:"#f4db49",91:"#e9b115",92:"#dc9613",105:"#fdff76",106:"#e9b115",107:"#dc9613",108:"#dc9613",123:"#dc9613",194:"#67290b",209:"#67290b",210:"#ba5f34",211:"#411805",224:"#67290b",225:"#a34b22",226:"#411805",240:"#a34b22",241:"#411805"},diamond:{30:"#f2fffd",45:"#f2fffd",60:"#f2fffd",75:"#f2fffd",90:"#f2fffd",194:"#67290b",209:"#67290b",210:"#ba5f34",211:"#411805",224:"#67290b",225:"#a34b22",226:"#411805",240:"#a34b22",241:"#411805"},netherite:{29:"#5d565d",43:"#584e56",44:"#5d565d",46:"#3c3232",57:"#4b3f46",58:"#5d565d",59:"#584e56",61:"#3c3232",72:"#4b3f46",73:"#584e56",74:"#5d565d",76:"#3c3232",77:"#31292a",89:"#584e56",91:"#3c3232",92:"#31292a",104:"#2f2122",106:"#31292a",107:"#31292a",108:"#31292a",119:"#2f2122",120:"#603432",121:"#231012",123:"#31292a",134:"#2f2122",135:"#734543",136:"#231012",149:"#2f2122",150:"#734543",151:"#231012",164:"#2f2122",165:"#734543",166:"#231012",179:"#2f2122",180:"#734543",181:"#231012",194:"#2f2122",195:"#734543",196:"#231012",209:"#2f2122",210:"#434043",211:"#231012",224:"#2f2122",225:"#3b393b",226:"#231012",240:"#3b393b",241:"#231012"},copper:{29:"#fc9982",43:"#ea866b",44:"#fc9982",46:"#c15a36",57:"#d36f52",58:"#fc9982",59:"#ea866b",61:"#c15a36",72:"#d36f52",73:"#ea866b",74:"#fc9982",76:"#c15a36",89:"#ea866b",91:"#c15a36",106:"#9c4e31",194:"#67290b",209:"#67290b",210:"#ba5f34",211:"#411805",224:"#67290b",225:"#a34b22",226:"#411805",240:"#a34b22",241:"#411805"}};
+const HO=["................",".......BBB......","......BFEEB.....",".......AAEEBij..",".........AEEkh..","..........iEEA..",".........ijhA...","........ikh.....",".......ijh......","......ikh.......",".....ijh........","....ikh.........","...ijh..........","..ikh...........","..hh............","................"].map(r=>[...r].map(c=>".ABCDEFGhijk".indexOf(c))),EXH={wooden:{39:"#896726",40:"#755821",41:"#755821",57:"#6b511f",58:"#755821",74:"#6b511f",75:"#6b511f",76:"#896726",77:"#20180a",91:"#755821",92:"#6b511f",107:"#20180a",121:"#896726",122:"#20180a",137:"#20180a",151:"#896726",152:"#20180a",167:"#20180a",181:"#896726",182:"#20180a",197:"#20180a",211:"#896726",212:"#20180a",226:"#20180a",227:"#20180a"},stone:{39:"#9a9a9a",40:"#898989",41:"#898989",55:"#181818",56:"#181818",57:"#7f7f7f",58:"#898989",73:"#181818",74:"#7f7f7f",75:"#7f7f7f",77:"#181818",91:"#898989",92:"#7f7f7f",93:"#181818",107:"#181818",108:"#181818",122:"#181818",137:"#181818",152:"#181818",167:"#181818",182:"#181818",197:"#181818",212:"#181818",226:"#181818",227:"#181818"},iron:{39:"#ffffff",40:"#d8d8d8",41:"#d8d8d8",57:"#c1c1c1",58:"#d8d8d8",74:"#c1c1c1",75:"#c1c1c1",77:"#181818",91:"#d8d8d8",92:"#c1c1c1",107:"#181818",122:"#181818",137:"#181818",152:"#181818",167:"#181818",182:"#181818",197:"#181818",212:"#181818",226:"#181818",227:"#181818"},golden:{57:"#e9b115",74:"#e9b115",75:"#e9b115",92:"#e9b115",107:"#3f2e0e"},diamond:{57:"#27b29a",74:"#27b29a",75:"#27b29a",92:"#27b29a"},netherite:{23:"#4a293e",24:"#4a293e",25:"#4a293e",38:"#4a293e",39:"#867b86",40:"#867b86",41:"#867b86",42:"#4a293e",55:"#1b1415",56:"#1b1415",57:"#706770",58:"#867b86",59:"#322727",60:"#2f2122",61:"#603432",73:"#1b1415",74:"#5d565d",75:"#706770",76:"#734543",77:"#1b1415",90:"#2f2122",91:"#5d565d",92:"#4f3c3e",93:"#1b1415",105:"#2f2122",106:"#603432",107:"#1b1415",108:"#1b1415",120:"#2f2122",121:"#734543",122:"#1b1415",135:"#2f2122",136:"#603432",137:"#1b1415",150:"#2f2122",151:"#734543",152:"#1b1415",165:"#2f2122",166:"#434043",167:"#1b1415",180:"#2f2122",181:"#3b393b",182:"#1b1415",195:"#2f2122",196:"#434043",197:"#1b1415",210:"#2f2122",211:"#734543",212:"#1b1415",226:"#1b1415",227:"#1b1415"},copper:{57:"#d66d48",74:"#d66d48",75:"#d66d48",92:"#d66d48"}};
+const NAMES={sword:"sword",pick:"pickaxe",axe:"axe",shovel:"shovel",spear:"spear",hoe:"hoe"};
+MATS.forEach(m=>{m[2]=PAL[m[0]]||ex(m[2]);m[3]={sword:EXC[m[0]],pick:EXP[m[0]],axe:EXA[m[0]],shovel:EXS[m[0]],spear:EXSP[m[0]],hoe:EXH[m[0]]}});
+MATS[4][2]=["#082520","#0e3f36","#156355","#1e8a77","#2bc7ac","#33ebcb","#a4fdf0"];
+const SW=[".............BBB","............BGGA","...........BGEGA","..........BGEGA.",".........BGEFA..","........BGEFA...","..BB...BFEFA....","..BCB.BFEFA.....","...BDAFDFA......","...BDDCFA.......","....BCBA........","...ijABBA.......","..ikh.AABA......","BBjh....AA......","BCA.............","AAA............."].map(r=>[...r].map(c=>".ABCDEFGhijk".indexOf(c)));
+function mk(f){const g=Array(N*N).fill(0),p=(x,y,v)=>{if(x>=0&&y>=0&&x<N&&y<N)g[y*N+x]=v};f(p);const b=g.slice();
+ b.forEach((v,i)=>{if(!v){const x=i%N,y=i/N|0;if([[1,0],[-1,0],[0,1],[0,-1]].some(([a,c])=>{const X=x+a,Y=y+c;return X>=0&&Y>=0&&X<N&&Y<N&&b[Y*N+X]}))g[i]=1}});return g}
+const swordOld=p=>{for(let k=-2;k<=2;k++){p(5+k,10+k,2);p(6+k,10+k,3)}
+ for(let i=1;i<=4;i++)p(5-i,10+i,i==4?7:6);
+ for(let i=0;i<=8;i++){p(14-i,1+i,i>5?2:3);if(i)p(13-i,1+i,4)}p(14,1,5)};
+const pick=p=>{for(let i=0;i<=8;i++)p(2+i,13-i,9);
+ [[3,5],[4,4],[5,3],[6,3],[7,2],[8,2],[9,2],[10,3],[11,3],[12,4],[13,5]].forEach(([x,y])=>{p(x,y,6);p(x,y+1,4)});p(7,2,7);p(8,2,7)};
+let grid=SW.flat(),mat=2,slot=3,tool="pen",mirror=false,down=false,q=0;
+let ref="sword",off=[0,0],assetName="",armorSlot="",activeVariants=null,variantMode="",variantSuffix="",variantSync=true,tabs=[],activeTabId=0,nextTabId=1;const isC=i=>!activeVariants&&MATS[i][0].startsWith("custom"),DEFS={sword:SW.flat(),pick:PK.flat(),axe:AX.flat(),shovel:SH.flat(),spear:SP.flat(),hoe:HO.flat()},materials=()=>activeVariants||MATS,col=(m,v,i)=>{if(!v)return null;if(activeVariants)return activeVariants[m].palette[v-1]||activeVariants[m].palette[0];const o=ref&&MATS[m][3]&&MATS[m][3][ref];if(o){const j=(((i>>4)-off[1])&15)*16+(((i&15)-off[0])&15);if(o[j]&&v==DEFS[ref][j])return o[j]}return v>=8?(MATS[m][4]||HAND)[v-8]:MATS[m][2][v-1]};
+function render(m,sc){const c=document.createElement("canvas");c.width=c.height=N*sc;const x=c.getContext("2d");
+ grid.forEach((v,i)=>{const k=col(m,v,i);if(k){x.fillStyle=k;x.fillRect(i%N*sc,(i/N|0)*sc,sc,sc)}});return c}
+const cv=$("#cv"),cx=cv.getContext("2d");
+function draw(){const S=40;for(let i=0;i<N*N;i++){const px=i%N,py=i/N|0;cx.fillStyle=(px+py)%2?"#c9c9c9":"#e4e4e4";cx.fillRect(px*S,py*S,S,S);
+ const k=col(mat,grid[i],i);if(k){cx.fillStyle=k;cx.fillRect(px*S,py*S,S,S)}}
+ cx.strokeStyle="rgba(0,0,0,.12)";cx.beginPath();for(let i=0;i<=N;i++){cx.moveTo(i*S+.5,0);cx.lineTo(i*S+.5,640);cx.moveTo(0,i*S+.5);cx.lineTo(640,i*S+.5)}if($("#grd").checked)cx.stroke();if(sel){cx.strokeStyle="#f33";cx.lineWidth=3;cx.setLineDash([8,6]);cx.strokeRect(sel.x*S+1.5,sel.y*S+1.5,sel.w*S-3,sel.h*S-3);cx.setLineDash([]);cx.lineWidth=1}}
+function buildSlots(){$("#slots").innerHTML=LAB.map((l,i)=>`<button class="slot${slot==i+1&&tool!="eraser"?" on":""}" data-s="${i+1}"><i style="background:${col(mat,i+1)}"></i>${l}</button>`).join("")}
+function buildPrev(){const P=$("#prev");P.innerHTML="";materials().forEach((m,i)=>{const d=document.createElement("button");d.className="pv"+(i==mat?" on":"");d.append(render(i,4),activeVariants?m.name:m[1]);d.onclick=()=>switchVariant(i);P.append(d)})}
+function buildColors(){const B=$("#colors");B.innerHTML="";
+ const add=(a,i,l)=>{const L=document.createElement("label"),c=document.createElement("input");c.type="color";c.value=a[i];c.oninput=()=>{a[i]=c.value;sched();buildSlots()};L.append(c,l);B.append(L)};
+ if(activeVariants)activeVariants[mat].palette.forEach((_,i)=>add(activeVariants[mat].palette,i,LAB[i]));else{if(isC(mat))MATS[mat][2].forEach((_,i)=>add(MATS[mat][2],i,LAB[i]));const details=MATS[mat][4]||HAND;details.forEach((_,i)=>add(details,i,LAB[7+i]))}}
+function sched(){if(!q)q=requestAnimationFrame(()=>{q=0;draw();buildPrev()})}
+function documentName(path){return path?path.split("/").pop():"新規テクスチャ"}
+const cloneHistory=history=>history.map(entry=>({g:entry.g.slice(),r:entry.r,o:entry.o.slice()}));
+function saveActiveVariantState(){if(!activeVariants||variantSync)return;const variant=activeVariants[mat];if(!variant)return;variant.grid=grid.slice();variant.ref=ref;variant.off=off.slice();variant.sel=sel&&{...sel};variant.history=cloneHistory(H);variant.redo=cloneHistory(R)}
+function switchVariant(index){if(index===mat)return;if(!variantSync)saveActiveVariantState();mat=index;if(!variantSync){const variant=activeVariants[mat];grid=variant.grid?variant.grid.slice():grid.slice();ref=variant.ref??null;off=variant.off?variant.off.slice():[0,0];sel=variant.sel&&{...variant.sel};H=cloneHistory(variant.history||[]);R=cloneHistory(variant.redo||[]);hb()}all()}
+function saveActiveTab(){const tab=tabs.find(entry=>entry.id===activeTabId);if(!tab)return;saveActiveVariantState();tab.title=documentName(assetName);tab.state={grid:grid.slice(),mat,slot,tool,mirror,mirrorY,ref,off:off.slice(),assetName,armorSlot,variantMode,variantSuffix,variantSync,customPalette:MATS[7][2].slice(),customDetails:(MATS[7][4]||[]).slice(),activeVariants:activeVariants&&activeVariants.map(entry=>({...entry,palette:entry.palette.slice(),grid:entry.grid&&entry.grid.slice(),off:entry.off&&entry.off.slice(),sel:entry.sel&&{...entry.sel},history:entry.history&&cloneHistory(entry.history),redo:entry.redo&&cloneHistory(entry.redo)})),sel:sel&&{...sel},history:cloneHistory(H),redo:cloneHistory(R),name:$("#name").value}}
+function renderTabs(){const bar=$("#docTabs");bar.replaceChildren();for(const tab of tabs){const button=document.createElement("button"),title=document.createElement("span"),close=document.createElement("span");button.type="button";button.className="doc-tab"+(tab.id===activeTabId?" active":"");button.setAttribute("role","tab");button.setAttribute("aria-selected",tab.id===activeTabId?"true":"false");button.title=tab.title;title.textContent=tab.title;close.className="doc-close";close.textContent="×";close.title="タブを閉じる";close.onclick=event=>{event.stopPropagation();closeTab(tab.id)};button.append(title,close);button.onclick=()=>switchTab(tab.id);bar.append(button)}const add=document.createElement("button");add.type="button";add.className="doc-add";add.textContent="+";add.title="新しいテクスチャを開く";add.onclick=createBlankTab;bar.append(add)}
+function activateTab(tab){activeTabId=tab.id;const state=tab.state;grid=state.grid.slice();mat=state.mat;slot=state.slot;tool=state.tool;mirror=state.mirror;mirrorY=state.mirrorY;ref=state.ref;off=state.off.slice();assetName=state.assetName;armorSlot=state.armorSlot;variantMode=state.variantMode;variantSuffix=state.variantSuffix;variantSync=state.variantSync!==false;MATS[7][2]=state.customPalette.slice();MATS[7][4]=state.customDetails.slice();activeVariants=state.activeVariants&&state.activeVariants.map(entry=>({...entry,palette:entry.palette.slice(),grid:entry.grid&&entry.grid.slice(),off:entry.off&&entry.off.slice(),sel:entry.sel&&{...entry.sel},history:entry.history&&cloneHistory(entry.history),redo:entry.redo&&cloneHistory(entry.redo)}));sel=state.sel&&{...state.sel};H=cloneHistory(state.history);R=cloneHistory(state.redo);$("#name").value=state.name;$("#mir").checked=mirror;$("#mirY").checked=mirrorY;setTool(tool);all()}
+function switchTab(id){if(id===activeTabId)return;saveActiveTab();const tab=tabs.find(entry=>entry.id===id);if(tab)activateTab(tab)}
+function createBlankTab(){saveActiveTab();const tab={id:nextTabId++,title:"新規テクスチャ",state:null};tabs.push(tab);grid=SW.flat();grid.fill(0);mat=2;slot=3;tool="pen";mirror=false;mirrorY=false;ref=null;off=[0,0];assetName="";armorSlot="";activeVariants=null;variantMode="";variantSuffix="";variantSync=true;sel=null;H=[];R=[];$("#name").value="item";$("#mir").checked=false;$("#mirY").checked=false;activeTabId=tab.id;all()}
+function closeTab(id){const index=tabs.findIndex(entry=>entry.id===id);if(index<0)return;const wasActive=id===activeTabId;tabs.splice(index,1);if(!tabs.length){activeTabId=0;createBlankTab();return}if(wasActive)activateTab(tabs[Math.max(0,index-1)]);else{saveActiveTab();renderTabs()}}
+function all(){$("#curm").textContent=activeVariants?materials()[mat].name:materials()[mat][1];$("#assetSource").textContent=assetName?"元画像: "+assetName:ref?"テンプレート: "+ref:"素材ライブラリから画像を選択";$("#layerName").textContent=documentName(assetName);$("#variantTitle").textContent=variantMode==="armor"?"防具の種類":variantMode==="single"?"単一画像のカラー":variantMode==="color"?"色のバリエーション":variantMode==="item"?"素材バリエーション":"素材バリエーション";$("#variantNote").textContent=variantMode==="single"?"素材違いなし · 1種類のみ編集":!variantSync&&activeVariants&&activeVariants.length>1?"種類ごとに個別編集":variantMode==="color"?"色違いのテクスチャ":"";$("#variantSyncControl").hidden=!(activeVariants&&activeVariants.length>1);$("#variantSync").checked=variantSync;
+ $("#addm").disabled=!!activeVariants;$("#delm").disabled=!!activeVariants;draw();buildSlots();buildPrev();buildColors();saveActiveTab();renderTabs()}
+$("#slots").onclick=e=>{const b=e.target.closest(".slot");if(!b)return;slot=+b.dataset.s;if(tool=="eraser")setTool("pen");buildSlots()};
+function setTool(t){tool=t;document.querySelectorAll("#tools [data-t]").forEach(b=>b.classList.toggle("on",b.dataset.t==t));buildSlots()}
+$("#tools").onclick=e=>{const b=e.target.closest("[data-t]");if(b)setTool(b.dataset.t)};
+$("#toolrail").onclick=e=>{const b=e.target.closest("[data-t]");if(b)setTool(b.dataset.t);const operation=e.target.closest("[data-o]");if(operation)operateSelection(operation.dataset.o)};
+$("#library").onclick=e=>{const b=e.target.closest("[data-side]");if(!b)return;if(b.dataset.side=="undo")undo();else if(b.dataset.side=="redo")redo();else if(b.dataset.side=="new-tab")createBlankTab();else if(b.dataset.side=="import")$("#fi").click()};
+$("#mir").onchange=e=>mirror=e.target.checked;
+$("#variantSync").onchange=e=>{if(!activeVariants||activeVariants.length<2){variantSync=true;all();return}if(e.target.checked){saveActiveVariantState();const state={grid:grid.slice(),ref,off:off.slice(),sel:sel&&{...sel}};for(const variant of activeVariants){variant.grid=state.grid.slice();variant.ref=state.ref;variant.off=state.off.slice();variant.sel=state.sel&&{...state.sel};variant.history=[];variant.redo=[]}H=[];R=[];variantSync=true}else{variantSync=false;for(const variant of activeVariants){variant.grid=grid.slice();variant.ref=ref;variant.off=off.slice();variant.sel=sel&&{...sel};variant.history=cloneHistory(H);variant.redo=cloneHistory(R)}}hb();all()};
+$("#presets").onclick=e=>{const b=e.target.closest("[data-p]");if(!b)return;const p=b.dataset.p;
+ push();assetName="";armorSlot="";activeVariants=null;variantMode="";variantSuffix="";variantSync=true;mat=Math.min(mat,MATS.length-1);ref=p=="blank"?null:p;off=[0,0];sel=null;grid=p=="blank"?Array(N*N).fill(0):DEFS[p].slice();if(p!="blank")$("#name").value=NAMES[p];buildAssetList();all()};
+const cell=e=>{const r=cv.getBoundingClientRect();return[Math.floor((e.clientX-r.left)/r.width*N),Math.floor((e.clientY-r.top)/r.height*N)]};
+
+function fill(x,y){if(x<0||y<0||x>=N||y>=N)return;const t=grid[y*N+x];if(t==slot)return;const s=[[x,y]];
+ while(s.length){const[a,b]=s.pop();if(a<0||b<0||a>=N||b>=N||grid[b*N+a]!=t)continue;grid[b*N+a]=slot;s.push([a+1,b],[a-1,b],[a,b+1],[a,b-1])}}
+let H=[],R=[];
+const snap=()=>({g:grid.slice(),r:ref,o:off.slice()});
+function hb(){$("#un").disabled=!H.length;$("#re").disabled=!R.length}
+function push(){H.push(snap());if(H.length>100)H.shift();R=[];hb()}
+function rest(s){grid=s.g;ref=s.r;off=s.o;all()}
+function undo(){if(!H.length)return;R.push(snap());rest(H.pop());hb()}
+function redo(){if(!R.length)return;H.push(snap());rest(R.pop());hb()}
+$("#un").onclick=undo;$("#re").onclick=redo;
+function mov(dx,dy){if(sel){push();const c=cells(sel);put2(sel,Array(sel.w*sel.h).fill(0));sel={...sel,x:sel.x+dx,y:sel.y+dy};put2(sel,c,1);ref=null;all();return}push();const g=Array(256).fill(0);grid.forEach((v,i)=>{g[(((i>>4)+dy)&15)*16+(((i&15)+dx)&15)]=v});grid=g;off=[(off[0]+dx)&15,(off[1]+dy)&15];all()}
+document.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>mov(...b.dataset.m.split(",").map(Number)));
+document.addEventListener("keydown",e=>{if(e.target.tagName=="INPUT"||e.ctrlKey||e.metaKey)return;const d={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[e.key];if(d){e.preventDefault();mov(...d)}});
+let cn=1;
+$("#addm").onclick=()=>{if(activeVariants)return;cn++;MATS.push(["custom"+cn,"カスタム"+cn,MATS[mat][2].slice(),null,(MATS[mat][4]||HAND).slice()]);mat=MATS.length-1;all()};
+$("#delm").onclick=()=>{if(activeVariants)return;if(MATS.length<2||!isC(mat))return msg("組み込みの素材は削除できません");MATS.splice(mat,1);mat=Math.min(mat,MATS.length-1);all()};
+document.addEventListener("keydown",e=>{if(!(e.ctrlKey||e.metaKey)||e.target.tagName=="INPUT")return;const k=e.key.toLowerCase();if(k=="z"){e.preventDefault();e.shiftKey?redo():undo()}else if(k=="y"){e.preventDefault();redo()}});
+hb();
+function put(x,y,v){if(x<0||y<0||x>=N||y>=N)return;grid[y*N+x]=v;if(mirror)grid[y*N+N-1-x]=v;if(mirrorY)grid[(N-1-y)*N+x]=v;if(mirror&&mirrorY)grid[(N-1-y)*N+N-1-x]=v}
+function paint(x,y,v=tool=="eraser"?0:slot){const b=+$("#bs").value;for(let i=0;i<b;i++)for(let j=0;j<b;j++)put(x+i,y+j,v)}
+let mirrorY=false,st=null,base=null,clip=null,sel=null,drag=null;
+$("#mirY").onchange=e=>{mirrorY=e.target.checked};$("#grd").onchange=draw;
+const cl=v=>Math.max(0,Math.min(15,v)),Z=n=>Array(n).fill(0),RG=()=>sel||{x:0,y:0,w:N,h:N};
+const inSel=(x,y)=>sel&&x>=sel.x&&x<sel.x+sel.w&&y>=sel.y&&y<sel.y+sel.h;
+function cells(r){const c=[];for(let j=0;j<r.h;j++)for(let i=0;i<r.w;i++)c.push(grid[(r.y+j)*N+r.x+i]);return c}
+function put2(r,c,sk){for(let j=0;j<r.h;j++)for(let i=0;i<r.w;i++){const X=r.x+i,Y=r.y+j,v=c[j*r.w+i];if(X>=0&&Y>=0&&X<N&&Y<N&&!(sk&&!v))grid[Y*N+X]=v}}
+function shape(a,b,t){const[x0,y0]=a,[x1,y1]=b,xa=Math.min(x0,x1),xb=Math.max(x0,x1),ya=Math.min(y0,y1),yb=Math.max(y0,y1);
+ if(t=="line"){let dx=xb-xa,dy=-(yb-ya),sx=x0<x1?1:-1,sy=y0<y1?1:-1,er=dx+dy,x=x0,y=y0;for(;;){paint(x,y);if(x==x1&&y==y1)break;const e2=2*er;if(e2>=dy){er+=dy;x+=sx}if(e2<=dx){er+=dx;y+=sy}}}
+ else if(t=="rect"||t=="frect"){for(let x=xa;x<=xb;x++)for(let y=ya;y<=yb;y++)if(t=="frect"||x==xa||x==xb||y==ya||y==yb)paint(x,y)}
+ else{const mx=(x0+x1)/2,my=(y0+y1)/2,rx=(xb-xa)/2+.5,ry=(yb-ya)/2+.5,f=(x,y)=>((x-mx)/rx)**2+((y-my)/ry)**2<=1;
+  for(let x=xa;x<=xb;x++)for(let y=ya;y<=yb;y++)if(f(x,y)&&!(f(x+1,y)&&f(x-1,y)&&f(x,y+1)&&f(x,y-1)))paint(x,y)}}
+cv.onpointerdown=e=>{e.preventDefault();cv.setPointerCapture(e.pointerId);const[x,y]=cell(e).map(cl);
+ if(tool=="dropper"){const v=grid[y*N+x];if(v){slot=v;setTool("pen")}else setTool("eraser");return}
+ down=true;push();st=[x,y];
+ if(tool=="sel"){if(inSel(x,y)){ref=null;const c=cells(sel);put2(sel,Z(sel.w*sel.h));drag={x,y,s:{...sel},c,b:grid.slice()}}else sel={x,y,w:1,h:1};sched();return}
+ base=grid.slice();
+ if(tool=="fill")fill(x,y);else if(tool=="rep"){const t=grid[y*N+x];grid=grid.map(v=>v==t?slot:v)}else if(tool=="pen"||tool=="eraser")paint(x,y);else shape(st,[x,y],tool);sched()};
+cv.onpointermove=e=>{if(!down)return;const[x,y]=cell(e).map(cl);
+ if(tool=="sel"){if(drag){const dx=x-drag.x,dy=y-drag.y;grid=drag.b.slice();put2({...drag.s,x:drag.s.x+dx,y:drag.s.y+dy},drag.c,1);sel={...drag.s,x:drag.s.x+dx,y:drag.s.y+dy}}else sel={x:Math.min(st[0],x),y:Math.min(st[1],y),w:Math.abs(x-st[0])+1,h:Math.abs(y-st[1])+1}}
+ else if(tool=="pen"||tool=="eraser")paint(x,y);
+ else if(["line","rect","frect","oval"].includes(tool)){grid=base.slice();shape(st,[x,y],tool)}
+ sched()};
+cv.onpointerup=cv.onpointercancel=()=>{down=false;st=null;drag=null;base=null};
+function operateSelection(o){if(!o)return;const r=RG();
+ if(o=="all")sel={x:0,y:0,w:N,h:N};else if(o=="none")sel=null;
+ else if(o=="copy"||o=="cut"){clip={w:r.w,h:r.h,c:cells(r)};if(o=="cut"){push();put2(r,Z(r.w*r.h))}msg("コピーしました")}
+ else if(o=="paste"){if(!clip)return msg("先にコピーしてください");push();const p={x:sel?sel.x:0,y:sel?sel.y:0,w:clip.w,h:clip.h};put2(p,clip.c,1);sel={...p,w:Math.min(p.w,N-p.x),h:Math.min(p.h,N-p.y)}}
+ else if(o=="del"){if(!sel)return;push();put2(r,Z(r.w*r.h))}
+ else{const c=cells(r);let out=null;
+  if(o=="fh")out=c.map((_,k)=>c[((k/r.w)|0)*r.w+r.w-1-k%r.w]);
+  else if(o=="fv")out=c.map((_,k)=>c[(r.h-1-((k/r.w)|0))*r.w+k%r.w]);
+  else if(o=="rot"){if(r.w!=r.h)return msg("90°回転は正方形の範囲で使えます");out=c.map((_,k)=>c[(r.h-1-k%r.w)*r.w+((k/r.w)|0)])}
+  else out=c.map(v=>v&&v<=7?Math.max(1,Math.min(7,v+(o=="up"?1:-1))):v);
+  push();ref=null;put2(r,out)}
+ all()}
+document.addEventListener("keydown",e=>{if(["INPUT","SELECT"].includes(e.target.tagName)||e.ctrlKey||e.metaKey)return;const m={p:"pen",e:"eraser",f:"fill",i:"dropper",l:"line",r:"rect",s:"sel"}[e.key.toLowerCase()];
+ if(m)setTool(m);else if(/^[1-7]$/.test(e.key)){slot=+e.key;if(tool=="eraser")setTool("pen");buildSlots()}else if(e.key=="Escape"){sel=null;draw()}});
+const lum=c=>.299*c[0]+.587*c[1]+.114*c[2],dist=(a,b)=>(a[0]-b[0])**2+(a[1]-b[1])**2+(a[2]-b[2])**2,rh=c=>"#"+c.map(v=>v.toString(16).padStart(2,"0")).join("");
+const ARMOR_FILE=/^(leather|chainmail|iron|golden|diamond|netherite)_(helmet|chestplate|leggings|boots)\.png$/;
+async function readImagePixels(bytes){const bitmap=await createImageBitmap(new Blob([bytes])),canvas=document.createElement("canvas");canvas.width=canvas.height=N;const context=canvas.getContext("2d");context.imageSmoothingEnabled=false;context.drawImage(bitmap,0,0,N,N);bitmap.close();const data=context.getImageData(0,0,N,N).data,pixels=[];for(let i=0;i<N*N;i++)pixels.push(data[i*4+3]<128?null:[data[i*4],data[i*4+1],data[i*4+2]]);return pixels}
+function paletteFromPixels(pixels){const unique=[...new Set(pixels.filter(Boolean).map(String))].map(color=>color.split(",").map(Number)).sort((a,b)=>lum(a)-lum(b)),count=Math.min(11,unique.length);if(!count)return Array(11).fill("#ffffff");const palette=Array.from({length:count},(_,i)=>rh(unique[Math.round(i*(unique.length-1)/Math.max(1,count-1))]));while(palette.length<11)palette.push(palette[palette.length-1]);return palette}
+const ITEM_VARIANT_FILE=/^(wooden|stone|iron|golden|diamond|netherite|copper)_(sword|pickaxe|axe|shovel|hoe)\.png$/;
+function paletteColors(palette){return palette.map(hex=>[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16)))}
+const COLOR_TYPES=[["white","白"],["orange","橙"],["magenta","赤紫"],["light_blue","水色"],["yellow","黄"],["lime","黄緑"],["pink","桃"],["gray","灰"],["light_gray","薄灰"],["cyan","青緑"],["purple","紫"],["blue","青"],["brown","茶"],["green","緑"],["red","赤"],["black","黒"]];
+const COLOR_FAMILY=/^(wool|carpet|concrete|concrete_powder|terracotta|glazed_terracotta|stained_glass|stained_glass_pane_top|stained_glass_pane|candle|candle_lit|shulker_box|harness|bed)$/;
+const basename=path=>path.split("/").pop(),folder=path=>path.slice(0,path.lastIndexOf("/"));
+async function variantFromFile(filename,id,name){const bytes=await window.textureStudio.readTexture(filename);return{id,name,filename,palette:paletteFromPixels(await readImagePixels(bytes))}}
+async function prepareTextureVariants(filename){const base=basename(filename),directory=folder(filename),armorMatch=directory==="textures/item"?ARMOR_FILE.exec(base):null;armorSlot="";activeVariants=null;variantMode="";variantSuffix="";
+ if(armorMatch){armorSlot=armorMatch[2];const variants=await Promise.all(ARMOR_TYPES.map(async([key,label])=>{const path=`${directory}/${key}_${armorSlot}.png`;try{return await variantFromFile(path,key,label)}catch(error){throw new Error(`${basename(path)} を読み込めませんでした: ${error.message||error}`)}}));activeVariants=variants;variantMode="armor";mat=Math.max(0,ARMOR_TYPES.findIndex(([key])=>key===armorMatch[1]));return}
+ if(directory==="textures/item"){const itemMatch=ITEM_VARIANT_FILE.exec(base);if(itemMatch){variantSuffix=itemMatch[2];const variants=[];for(const material of MATS){if(material[0]==="custom")continue;const path=`${directory}/${material[0]}_${variantSuffix}.png`;if(assetFiles.includes(path))variants.push(await variantFromFile(path,material[0],material[1]))}if(variants.length>1){activeVariants=variants;variantMode="item";mat=variants.findIndex(entry=>entry.filename===filename);return}}}
+ const stem=base.replace(/\.png$/i,"");for(const[color,label]of COLOR_TYPES){if(!stem.startsWith(`${color}_`))continue;const family=stem.slice(color.length+1);if(!COLOR_FAMILY.test(family))continue;const variants=[];for(const[candidate,colorName]of COLOR_TYPES){const path=`${directory}/${candidate}_${family}.png`;if(assetFiles.includes(path))variants.push(await variantFromFile(path,candidate,colorName))}if(variants.length>1){activeVariants=variants;variantMode="color";variantSuffix=family;mat=variants.findIndex(entry=>entry.filename===filename);return}}
+ const original=await variantFromFile(filename,"original","1種類");activeVariants=[original];variantMode="single";mat=0}
+function imp(file,sourcePath=file.name||""){assetName=sourcePath;if(assetName)$("#name").value=basename(assetName).replace(/\.png$/i,"");buildAssetList();const im=new Image(),url=URL.createObjectURL(file);im.onload=()=>{URL.revokeObjectURL(url);const cz=document.createElement("canvas");cz.width=cz.height=N;const c=cz.getContext("2d");c.imageSmoothingEnabled=false;c.drawImage(im,0,0,N,N);
+ const d=c.getImageData(0,0,N,N).data,px=[];for(let i=0;i<256;i++)px.push(d[i*4+3]<128?null:[d[i*4],d[i*4+1],d[i*4+2]]);
+ const near=(p,P)=>{let b=0,bd=1e9;P.forEach((q,k)=>{const t=dist(p,q);if(t<bd){bd=t;b=k}});return b};
+ push();const g=Z(256);
+ if($("#im").value=="near"){const m=materials()[mat],P=activeVariants?paletteColors(m.palette):[...m[2],...(m[4]||HAND)].map(hx);px.forEach((p,i)=>{if(p)g[i]=near(p,P)+1})}
+ else{const u=[...new Set(px.filter(Boolean).map(String))].map(t=>t.split(",").map(Number)).sort((a,b)=>lum(a)-lum(b));
+  if(!u.length){msg("不透明のピクセルがありません");return}
+  const K=Math.min(11,u.length),ch=Array.from({length:K},(_,k)=>u[Math.round(k*(u.length-1)/Math.max(1,K-1))]);
+  px.forEach((p,i)=>{if(p)g[i]=near(p,ch)+1});const pal=ch.map(rh);while(pal.length<11)pal.push(pal[pal.length-1]);
+  if(activeVariants)activeVariants[mat].palette=pal;
+  else{const target=MATS.findIndex(m=>m[0]==="custom"),levels=pal.slice(0,7),details=pal.slice(7);MATS[target][2]=levels;MATS[target][4]=details;mat=target}}
+ ref=null;off=[0,0];sel=null;grid=g;all();msg("読み込みました")};im.onerror=()=>{URL.revokeObjectURL(url);msg("画像を読み込めませんでした")};im.src=url}
+const ASSET_LABELS={wooden:"木",stone:"石",iron:"鉄",golden:"金",diamond:"ダイヤモンド",netherite:"ネザライト",copper:"銅",leather:"革",chainmail:"チェーン",turtle:"カメ",helmet:"ヘルメット",chestplate:"チェストプレート",leggings:"レギンス",boots:"ブーツ",sword:"剣",pickaxe:"ツルハシ",axe:"斧",shovel:"シャベル",hoe:"クワ",mace:"メイス",trident:"トライデント",bow:"弓",crossbow:"クロスボウ",shield:"盾",apple:"リンゴ",enchanted:"エンチャント",overlay:"オーバーレイ",wool:"羊毛",carpet:"カーペット",concrete:"コンクリート",concrete_powder:"コンクリートパウダー",terracotta:"テラコッタ",glazed_terracotta:"彩釉テラコッタ",stained_glass:"色付きガラス",stained_glass_pane_top:"色付きガラス板",candle:"ろうそく",candle_lit:"点灯したろうそく"};
+const ROOT_LABELS={block:"ブロック",item:"アイテム",entity:"エンティティ",environment:"環境",gui:"GUI",font:"フォント",particle:"パーティクル",painting:"絵画",colormap:"カラーマップ",map:"地図",misc:"その他",effect:"エフェクト",mob_effect:"状態効果",palettes:"パレット",trims:"防具装飾"};
+const ASSET_ICONS={blocks:"▦",items:"◈",sword:"⚔",pickaxe:"⛏",axe:"🪓",shovel:"♠",hoe:"⚒",otherTools:"⚒",armor:"⛨",food:"◈",entity:"♟",environment:"☁",interface:"▤",other:"▧"};
+const assetFiles=[];
+const ARMOR_VARIANT=/^(leather|chainmail|iron|golden|diamond|netherite)_(helmet|chestplate|leggings|boots)\.png$/;
+function assetCategory(path){const root=path.split("/")[1],name=basename(path).toLowerCase();if(root==="block")return"blocks";if(root==="item"){if(ARMOR_VARIANT.test(name))return"armor";const variant=ITEM_VARIANT_FILE.exec(name);if(variant)return variant[2];if(/(mace|trident|bow|crossbow|shield|fishing_rod|flint_and_steel|shears|brush|spyglass)/.test(name))return"otherTools";if(/(apple|bread|beef|chicken|cod|salmon|porkchop|mutton|rabbit|stew|cookie|melon_slice|carrot|potato|beetroot|berry|chorus_fruit|fish|egg|pie|bottle)/.test(name))return"food";return"items"}if(root==="entity")return"entity";if(root==="environment")return"environment";if(["gui","font"].includes(root))return"interface";return"other"}
+function assetDisplayName(path){const name=basename(path).replace(/\.png$/i,""),words=name.split("_").map(word=>ASSET_LABELS[word]||word).join(" ");return words}
+function groupedAssetPaths(){const groups=new Map();for(const path of assetFiles){if(!path.startsWith("textures/item/"))continue;const name=basename(path).toLowerCase(),armor=ARMOR_VARIANT.exec(name),item=ITEM_VARIANT_FILE.exec(name);if(armor){const key=`armor:${armor[2]}`;if(!groups.has(key))groups.set(key,{key,path,files:[],type:"armor",title:`防具 · ${assetDisplayName(path).replace(/^(革|チェーン|鉄|金|ダイヤモンド|ネザライト) /,"")}`});groups.get(key).files.push(path)}else if(item){const key=`${item[2]}:${item[2]}`;if(!groups.has(key))groups.set(key,{key,path,files:[],type:item[2],title:assetDisplayName(path).replace(/^(木|石|鉄|金|ダイヤモンド|ネザライト|銅) /,"")});const group=groups.get(key);group.files.push(path);if(name.startsWith("wooden_"))group.path=path}}
+ return[...groups.values()].map(group=>({...group,title:`${group.title} · ${group.files.length}素材`}))}
+function assetEntries(){const groups=groupedAssetPaths(),members=new Set(groups.flatMap(group=>group.files)),entries=groups.concat(assetFiles.filter(path=>!members.has(path)).map(path=>({key:path,path,files:[path],type:assetCategory(path),title:`${ROOT_LABELS[path.split("/")[1]]||path.split("/")[1]} · ${assetDisplayName(path)}`})));return entries}
+function matchesCategory(entry,category){if(category==="all")return true;if(category==="entity")return entry.path.startsWith("textures/entity/");if(category==="environment")return entry.path.startsWith("textures/environment/");if(category==="interface")return entry.path.startsWith("textures/gui/")||entry.path.startsWith("textures/font/");if(category==="other")return!["blocks","armor","sword","pickaxe","axe","shovel","hoe","otherTools","items","food","entity","environment","interface"].includes(entry.type);return entry.type===category}
+function buildAssetList(){const list=$("#assetList"),query=$("#assetSearch").value.trim().toLowerCase(),category=$("#assetCategory").value;list.replaceChildren();const matches=assetEntries().filter(entry=>matchesCategory(entry,category)&&(!query||entry.title.toLowerCase().includes(query)||entry.files.some(path=>path.toLowerCase().includes(query)))),shown=matches.slice(0,250);
+ for(const entry of shown){const button=document.createElement("button"),icon=document.createElement("span"),label=document.createElement("span"),selected=entry.files.includes(assetName);button.type="button";button.className="asset-entry"+(selected?" on":"");button.setAttribute("role","option");button.setAttribute("aria-selected",selected?"true":"false");icon.className="asset-icon";icon.textContent=ASSET_ICONS[entry.type]||ASSET_ICONS.other;label.className="asset-name";label.textContent=entry.title;button.append(icon,label);button.onclick=()=>loadBundledTexture(entry.path);list.append(button)}
+ $("#assetCount").textContent=matches.length>shown.length?`${shown.length}/${matches.length} 点`:`${matches.length} 点`;$("#assetEmpty").hidden=matches.length!==0}
+async function loadBundledTexture(path){if(!window.textureStudio){msg("素材ライブラリの読み込みにはWindowsアプリ版が必要です。");return}
+ const existing=tabs.find(tab=>tab.state&&tab.state.assetName===path);if(existing){switchTab(existing.id);return}
+ try{const bytes=await window.textureStudio.readTexture(path);createBlankTab();await prepareTextureVariants(path);assetName=path;$("#name").value=basename(path).replace(/\.png$/i,"");imp(new File([bytes],basename(path),{type:"image/png"}),path)}
+ catch(error){msg("テクスチャを読み込めませんでした: "+(error&&error.message||error))}}
+async function importTextureFile(file){createBlankTab();armorSlot="";const palette=MATS[mat][2].concat(MATS[mat][4]||HAND);activeVariants=[{id:"original",name:"1種類",filename:`textures/item/${file.name||"item.png"}`,palette}];variantMode="single";variantSuffix="";mat=0;imp(file,`textures/item/${file.name||"item.png"}`)}
+if(window.textureStudio){window.textureStudio.listTextures().then(files=>{assetFiles.push(...files);buildAssetList()}).catch(error=>{msg("素材一覧を読み込めませんでした: "+(error&&error.message||error));$("#assetCount").textContent="読込失敗"})}
+else{$("#assetCount").textContent="アプリ版で利用できます";$("#assetEmpty").hidden=false;$("#assetEmpty").textContent="素材ライブラリはWindowsアプリ版で利用できます"}
+$("#assetSearch").oninput=buildAssetList;$("#assetCategory").onchange=buildAssetList;
+$("#fi").onchange=e=>{const f=e.target.files[0];if(f)importTextureFile(f);e.target.value=""};
+cv.ondragover=e=>e.preventDefault();cv.ondrop=e=>{e.preventDefault();const f=e.dataTransfer.files[0];if(f)importTextureFile(f)};
+/* 保存 */
+const msg=t=>$("#msg").textContent=t,blob=c=>new Promise(r=>c.toBlob(r,"image/png")),
+ nm=()=>($("#name").value.trim()||"item").replace(/[^a-z0-9_]/gi,"_").toLowerCase();
+function showUpdateStatus(status){const label=$("#updateStatus"),button=$("#updateButton");button.disabled=false;switch(status.state){case"checking":label.textContent="更新を確認中…";button.disabled=true;break;case"available":label.textContent=`バージョン ${status.version} をダウンロード中…`;button.disabled=true;break;case"downloading":label.textContent=`更新をダウンロード中 ${status.percent}%`;button.disabled=true;break;case"downloaded":label.textContent=`バージョン ${status.version} を準備しました`;button.textContent="再起動して更新";break;case"current":label.textContent=`最新版です（${status.version}）`;button.textContent="更新を確認";break;case"development":label.textContent="更新確認はインストール版で利用できます";break;case"error":label.textContent=`更新確認に失敗: ${status.message}`;button.textContent="再試行";break;default:label.textContent="更新を確認できます"}}
+$("#updateButton").onclick=async()=>{const button=$("#updateButton");if(button.textContent==="再起動して更新"){try{await window.textureStudio.installUpdate()}catch(error){showUpdateStatus({state:"error",message:error.message||error})}return}if(!window.textureStudio){showUpdateStatus({state:"development"});return}button.disabled=true;try{await window.textureStudio.checkForUpdates()}catch(error){showUpdateStatus({state:"error",message:error.message||error})}};
+if(window.textureStudio)window.textureStudio.onUpdateStatus(showUpdateStatus);
+function zip(files){const T=new Uint32Array(256).map((_,n)=>{for(let k=0;k<8;k++)n=n&1?0xEDB88320^n>>>1:n>>>1;return n>>>0});
+ const crc=d=>{let c=-1;for(const b of d)c=T[(c^b)&255]^c>>>8;return(c^-1)>>>0};
+ const E=new TextEncoder(),parts=[],cen=[];let off=0;
+ for(const f of files){const n=E.encode(f.name),c=crc(f.data),L=f.data.length,h=new DataView(new ArrayBuffer(30));
+  h.setUint32(0,0x04034b50,true);h.setUint16(4,20,true);h.setUint32(14,c,true);h.setUint32(18,L,true);h.setUint32(22,L,true);h.setUint16(26,n.length,true);
+  parts.push(h.buffer,n,f.data);
+  const g=new DataView(new ArrayBuffer(46));g.setUint32(0,0x02014b50,true);g.setUint16(4,20,true);g.setUint16(6,20,true);g.setUint32(16,c,true);g.setUint32(20,L,true);g.setUint32(24,L,true);g.setUint16(28,n.length,true);g.setUint32(42,off,true);
+  cen.push(g.buffer,n);off+=30+n.length+L}
+ const cs=cen.reduce((a,b)=>a+b.byteLength,0),e=new DataView(new ArrayBuffer(22));
+ e.setUint32(0,0x06054b50,true);e.setUint16(8,files.length,true);e.setUint16(10,files.length,true);e.setUint32(12,cs,true);e.setUint32(16,off,true);
+ return new Blob([...parts,...cen,e.buffer],{type:"application/zip"})}
+async function sv(f,d){try{const b=await d;if(window.textureStudio){const r=await window.textureStudio.saveFile({filename:f,data:new Uint8Array(await b.arrayBuffer())});if(r.canceled){msg("キャンセルしました");return}}else{const u=URL.createObjectURL(b),a=document.createElement("a");a.href=u;a.download=f;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)}msg("保存しました: "+f)}catch(e){msg("保存できませんでした: "+(e&&e.message||e))}}
+const outputFilename=i=>{if(variantMode==="armor")return`${activeVariants[i].id}_${armorSlot}.png`;if(variantMode==="item")return basename(activeVariants[i].filename);if(variantMode==="color")return`${activeVariants[i].id}_${variantSuffix}.png`;if(variantMode==="single")return`${nm()}.png`;return`${MATS[i][0]}_${nm()}.png`};
+const outputTexturePath=i=>{if(variantMode==="armor"||variantMode==="item"||variantMode==="color")return`${folder(activeVariants[i].filename)}/${outputFilename(i)}`;if(assetName.startsWith("textures/"))return`${folder(assetName)}/${outputFilename(i)}`;return`textures/item/${outputFilename(i)}`};
+$("#s1").onclick=()=>sv(outputFilename(mat),blob(render(mat,1)));
+$("#sz").onclick=async()=>{const fs=[],active=materials();for(let i=0;i<active.length;i++){const b=await blob(render(i,1)),filename=outputTexturePath(i);
+ fs.push({name:`assets/minecraft/${filename}`,data:new Uint8Array(await b.arrayBuffer())})}
+ fs.push({name:"pack.mcmeta",data:new TextEncoder().encode(JSON.stringify({pack:{pack_format:+$("#pf").value||55,description:"Texture Studio"}}))});sv("textures.zip",zip(fs))};
+$("#saves").hidden=false;
+createBlankTab();
+</script></body></html>
