@@ -1,8 +1,8 @@
 {
-  "name": "palette-swap",
+  "name": "paletteswap",
   "version": "1.0.3",
   "private": true,
-  "description": "Palette-Swap Minecraft texture editor for Windows",
+  "description": "PaletteSwap Minecraft texture editor for Windows",
   "main": "main.cjs",
   "scripts": {
     "start": "electron .",
@@ -16,13 +16,13 @@
   },
   "build": {
     "appId": "jp.minekoubou.texturestudio",
-    "productName": "Palette-Swap",
+    "productName": "PaletteSwap",
     "artifactName": "${productName}-Setup-${version}.${ext}",
     "publish": [
       {
         "provider": "github",
         "owner": "sirotumekuma",
-        "repo": "Palette-Swap",
+        "repo": "PaletteSwap",
         "releaseType": "release"
       }
     ],
@@ -46,8 +46,8 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "Palette-Swap",
-      "uninstallDisplayName": "Palette-Swap",
+      "shortcutName": "PaletteSwap",
+      "uninstallDisplayName": "PaletteSwap",
       "language": "1041",
       "installerLanguages": "ja_JP"
     }

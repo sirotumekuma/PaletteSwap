@@ -29,7 +29,7 @@ npm run dist:win
 
 ## 自動更新のリリース
 
-配布先は [GitHub Releases](https://github.com/sirotumekuma/Palette-Swap/releases) です。新しい更新を配布するときは、`package.json` の `version` を前回より大きい値に変更し、PowerShellでGitHubのリリース作成権限を持つアクセストークンを環境変数に設定してからビルド・公開します。
+配布先は [GitHub Releases](https://github.com/sirotumekuma/PaletteSwap/releases) です。新しい更新を配布するときは、`package.json` の `version` を前回より大きい値に変更し、PowerShellでGitHubのリリース作成権限を持つアクセストークンを環境変数に設定してからビルド・公開します。
 
 ```powershell
 $env:GH_TOKEN = "GitHubのアクセストークン"
