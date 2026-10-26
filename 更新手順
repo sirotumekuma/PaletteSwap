@@ -1,0 +1,7 @@
+npm version patch --no-git-tag-version
+
+$env:GH_TOKEN = "GitHubのアクセストークン"
+npm run release:win
+Remove-Item Env:\GH_TOKEN
+
+//***   https://memo.zatsuzen.com/   ***\\\
