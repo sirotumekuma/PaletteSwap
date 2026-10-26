@@ -49,7 +49,7 @@ npm run dist:win
    git push origin v1.0.9
    ```
 
-5. GitHubの **Actions** で `Release Windows app` が成功したことを確認します。成功すると [GitHub Releases](https://github.com/sirotumekuma/PaletteSwap/releases) に `PaletteSwap-Setup-<バージョン>.exe`、`latest.yml`、`.blockmap` が公開されます。
+5. GitHubの **Actions** で `Release Windows app` が成功したことを確認します。成功すると [GitHub Releases](https://github.com/sirotumekuma/PaletteSwap/releases) に `PaletteSwap-Setup-<バージョン>.exe`、`latest.yml`、`.blockmap` が公開され、リリース説明もバージョンに合わせて設定されます。
 
 このワークフローはリポジトリの `GITHUB_TOKEN` を使ってリリースを作成するため、個人アクセストークンを発行・保存する必要はありません。Actionsの実行が権限エラーになる場合は、GitHubリポジトリの **Settings > Actions > General > Workflow permissions** で、ワークフローにContentsの書き込みを許可してください。
 
