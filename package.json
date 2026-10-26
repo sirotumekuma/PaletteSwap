@@ -1,6 +1,6 @@
 {
   "name": "paletteswap",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "private": true,
   "description": "PaletteSwap Minecraft texture editor for Windows",
   "main": "main.cjs",
