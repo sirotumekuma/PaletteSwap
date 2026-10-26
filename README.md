@@ -30,26 +30,27 @@ npm run dist:win
 
 作成されたインストーラーは `dist` フォルダーに出力されます。このコマンドはローカルでインストーラーを作るだけで、GitHub Releasesには公開しません。
 
-## Windows版のリリースと再デプロイ
+## Windows版のリリースと自動更新
 
-配布先は [GitHub Releases](https://github.com/sirotumekuma/PaletteSwap/releases) です。ソースの変更を反映して再配布する場合は、次の手順でWindowsインストーラーをビルドし、新しいGitHub Releaseに公開します。
+配布先は [GitHub Releases](https://github.com/sirotumekuma/PaletteSwap/releases) です。`dist:win` はインストーラーをPC内の `dist` フォルダーに作るだけで、GitHubには公開しません。GitHub Actionsで公開するには、次の手順で新しいバージョンのタグをPushします。
 
-1. 変更を確認し、リリースするソースをコミットしてGitHubにプッシュします。
-2. `package.json` のバージョンを、直近のリリースより大きい未使用の番号に上げます。`package-lock.json` も同じ番号に更新してください。たとえば現在のバージョンが `1.0.4` なら、次は `1.0.5` です。PowerShellから次のコマンドを実行すると、両方のファイルのパッチバージョンを上げられます。
+1. 変更をコミットしてGitHubにPushします。
+2. `package.json` と `package-lock.json` のバージョンを、公開済みの最新バージョンより大きい未使用の番号に上げます。パッチバージョンを上げる場合は次のコマンドを使えます。
 
    ```powershell
    npm version patch --no-git-tag-version
    ```
 
-3. バージョン変更をコミットしてGitHubにプッシュします。
-4. GitHub Releaseを作成できる権限を持つトークンを用意します。Fine-grained tokenの場合は、このリポジトリに対するContentsの読み書きを許可してください。トークンをソースコードや設定ファイルに書き込まず、PowerShellの環境変数に設定して公開コマンドを実行します。
+3. バージョン変更をコミットしてGitHubにPushします。
+4. `package.json` と同じバージョンのタグを作成してPushします。たとえばバージョンが `1.0.9` の場合は次のとおりです。
 
-```powershell
-$env:GH_TOKEN = "GitHubのアクセストークン"
-npm run release:win
-Remove-Item Env:\GH_TOKEN
-```
+   ```powershell
+   git tag v1.0.9
+   git push origin v1.0.9
+   ```
 
-`release:win` はWindows用インストーラーをビルドしてGitHub Releaseに公開します。完了後、[GitHub Releases](https://github.com/sirotumekuma/PaletteSwap/releases)で新しいバージョンが公開され、`PaletteSwap-Setup-<バージョン>.exe` と `latest.yml` などの更新ファイルが添付されていることを確認してください。エラーでコマンドが終了した場合は、原因を解消してから環境変数を削除してください。
+5. GitHubの **Actions** で `Release Windows app` が成功したことを確認します。成功すると [GitHub Releases](https://github.com/sirotumekuma/PaletteSwap/releases) に `PaletteSwap-Setup-<バージョン>.exe`、`latest.yml`、`.blockmap` が公開されます。
 
-リリース後、既にインストールされているアプリは起動時に更新を確認し、新版をバックグラウンドでダウンロードします。準備完了後、画面上部の「再起動して更新」を押すと適用されます。自動更新を利用するには、利用者がPaletteSwapのインストーラー版を一度インストールしている必要があります。インストーラーを手動で配布する場合も、GitHub Releaseに公開された同じバージョンの `.exe` を利用してください。
+このワークフローはリポジトリの `GITHUB_TOKEN` を使ってリリースを作成するため、個人アクセストークンを発行・保存する必要はありません。Actionsの実行が権限エラーになる場合は、GitHubリポジトリの **Settings > Actions > General > Workflow permissions** で、ワークフローにContentsの書き込みを許可してください。
+
+アプリの自動更新は、インストーラー版が公開済みReleaseの `latest.yml` を確認して行います。ビルドしただけの `.exe` や、GitHubにPushしただけのソースコードは更新対象になりません。Releaseの公開後、インストール済みアプリは起動時に更新を確認して新版をダウンロードします。準備ができたら、画面上部の「再起動して更新」を押してください。開発版や `dist` 内のインストーラーでは自動更新されません。
