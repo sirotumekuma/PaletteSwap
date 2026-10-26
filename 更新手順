@@ -1,7 +1,20 @@
 npm version patch --no-git-tag-version
 
+git tag v1.0.9
+git push origin v1.0.9
+
+git add README.md .github/workflows/release-windows.yml
+git commit -m "Automate Windows releases"
+git push origin main
+
+git tag v1.0.8
+git push origin v1.0.8
+
+//＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 $env:GH_TOKEN = "GitHubのアクセストークン"
 npm run release:win
 Remove-Item Env:\GH_TOKEN
 
 //***   https://memo.zatsuzen.com/   ***\\\
+
+
