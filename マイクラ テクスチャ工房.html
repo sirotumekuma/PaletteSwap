@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" href="./favicon.ico">
 <title>Palette-Swap</title>
 <style>
-:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f3f0e8;--fg:#222;--card:#fff;--bd:#d6d0c2;--ac:#3b8f3b;--mut:#6b675c}
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f3f0e8;--fg:#222;--card:#fff;--bd:#d6d0c2;--ac:#3b8f3b;--mut:#6b675c;--rail-width:46px;--library-width:254px;--right-width:280px;--splitter-width:8px}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1b1d1a;--fg:#ececec;--card:#262925;--bd:#3c413a;--ac:#6fcf6f;--mut:#a5a89f}}
 :root[data-theme="dark"]{--bg:#1b1d1a;--fg:#ececec;--card:#262925;--bd:#3c413a;--ac:#6fcf6f;--mut:#a5a89f}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
@@ -13,7 +14,6 @@ h1{font-size:22px;margin:4px 0}.sub{color:var(--mut);margin:0 0 14px}
 .wrap{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start}
 .card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px}
 .wrap>.card:first-child{flex:2 1 420px}
-.col{flex:1 1 320px;min-width:280px;display:flex;flex-direction:column;gap:14px}
 #cv{width:100%;max-width:640px;aspect-ratio:1;image-rendering:pixelated;touch-action:none;display:block;border:1px solid var(--bd);cursor:crosshair}
 .row{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;align-items:center}
 button{font:inherit;color:inherit;background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:5px 10px;cursor:pointer}
@@ -33,7 +33,6 @@ input[type=text]{font:inherit;color:inherit;background:var(--bg);border:1px soli
 
 button{padding:7px 13px}
 .grp{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid var(--bd)}
-#tools .grp:first-child{margin-top:14px}
 .gl{font-size:12px;font-weight:600;color:var(--mut);min-width:78px}
 .cur{font-size:16px;margin-bottom:10px}.cur b{color:var(--ac)}.cur small,.hint{color:var(--mut);font-size:12px}
 .hint{margin:10px 0 0}.mv{display:inline-flex;gap:4px;align-items:center;margin-left:8px}.mv button{padding:7px 11px}
@@ -41,7 +40,7 @@ button.on{background:color-mix(in srgb,var(--ac) 22%,var(--card));font-weight:60
 h2{font-size:15px;color:var(--fg)}
 .slot i{width:38px;height:28px}.slot{font-size:12px;padding:6px 8px}
 #prev{grid-template-columns:repeat(auto-fill,minmax(96px,1fr))}.pv canvas{width:80px;height:80px}.pv{font-size:13px}
-.card{padding:16px}.wrap{gap:18px}.col{gap:18px}
+.card{padding:16px}.wrap{gap:18px}
 *{box-sizing:border-box}
 :root{--bg:#202124;--fg:#e4e4e4;--card:#292a2d;--bd:#414247;--ac:#75a7ff;--mut:#a5a6ac;color-scheme:dark}
 body{background:#202124;color:var(--fg);font-size:13px;line-height:1.45}
@@ -53,6 +52,7 @@ main{max-width:none;padding:0}
 .appbar nav span{padding:6px 10px;border-radius:5px}
 .appbar nav span:first-child{background:#3a3b40;color:#fff}
 .appstatus{margin-left:auto;color:#aeb0b6;font-size:12px}
+.appmark{width:30px;height:30px;object-fit:contain;border-radius:6px}
 .app-update{display:flex;align-items:center;gap:8px;white-space:nowrap}
 .app-update button{font-size:11px;padding:5px 8px}
 .app-update-status{max-width:240px;overflow:hidden;text-overflow:ellipsis}
@@ -64,15 +64,13 @@ main{max-width:none;padding:0}
 .doc-add{position:sticky;right:0;width:34px;flex:none;font-size:18px}
 h1{display:none}
 .sub{display:none}
-.wrap{display:grid;grid-template-columns:34px 220px minmax(400px,1fr) 280px;gap:0;height:calc(100vh - 86px);align-items:stretch}
+.wrap{display:grid;grid-template-columns:300px minmax(400px,1fr) 280px;gap:0;height:calc(100vh - 86px);align-items:stretch}
 .wrap>.card:first-child{flex:auto;min-width:0}
 .card{background:#515151;border:0;border-radius:0;padding:12px}
 .ed{background:#606060;border-left:1px solid #3b3c40;border-right:1px solid #3b3c40;overflow:auto}
-.col{min-width:0;overflow:auto;gap:0}
-.col>.card{border-bottom:1px solid #414141}
 h2{font-size:12px;font-weight:650;letter-spacing:.02em;margin:0 0 11px;color:#d7d8dd}
 .cur{font-size:13px;margin-bottom:12px}.cur small{display:block;margin-top:2px;color:var(--mut)}
-#cv{max-width:720px;margin:24px auto 0;background:#fff;border-color:#262626;box-shadow:0 2px 10px #0005}
+#cv{max-width:min(900px,calc(100vh - 220px));margin:14px auto 0;background:#fff;border-color:#262626;box-shadow:0 2px 10px #0005}
 button,select,input[type=text],input[type=search]{color:#f1f1f1;background:#444;border:1px solid #626262;border-radius:3px}
 button{padding:6px 9px}
 button:hover{background:#5e5e5e;border-color:#858585}
@@ -87,63 +85,125 @@ button.pri{background:#5b89b5;border-color:#8cb0d0}
 .pv canvas{width:54px;height:54px}
 #colors{font-size:11px;gap:7px}
 input[type=text],input[type=search]{padding:7px 9px}
-#library{display:flex;flex-direction:column;min-width:0;overflow:hidden;background:#505050;border-right:1px solid #414141}
+#library{display:grid;grid-template-rows:minmax(220px,58%) auto auto auto minmax(0,1fr);min-width:0;min-height:0;overflow:hidden;background:#505050;border-right:1px solid #414141}
 .library-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .library-count{font-size:11px;color:#9b9da4}
 #assetCount{white-space:nowrap}
 #assetSearch{width:100%;margin-bottom:8px}
 #assetCategory{width:100%;margin-bottom:8px}
-#assetList{overflow:auto;display:flex;flex-direction:column;gap:3px}
+#assetList{min-height:0;overflow:auto;display:flex;flex-direction:column;gap:3px}
 .asset-entry{display:flex;align-items:center;gap:9px;text-align:left;width:100%;padding:7px 8px;background:transparent;border-color:transparent;color:#e7e7e7}
 .asset-entry:hover,.asset-entry.on{background:#666;border-color:#808080}
 .asset-icon{display:grid;place-items:center;width:30px;height:30px;border-radius:3px;background:#626262;font-size:15px;flex:none}
+.asset-preview{width:100%;height:100%;object-fit:contain;image-rendering:pixelated;background:repeating-conic-gradient(#777 0 25%,#999 0 50%) 0 0/8px 8px}
 .asset-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #assetEmpty{padding:16px 5px;color:var(--mut);font-size:12px}
 #msg{font-size:11px;overflow-wrap:anywhere}
 .hint{font-size:11px}
-.toolrail{display:flex;flex-direction:column;align-items:center;gap:4px;padding:7px 3px;background:#4d4d4d;border-right:1px solid #3c3c3c}
-.toolrail button{width:27px;height:27px;padding:0;font-size:14px;background:transparent;border-color:transparent}
-.toolrail .tool-split{height:1px;width:20px;background:#777;margin:4px 0}
+.left-tools{grid-row:1;min-height:0;overflow-y:auto;overflow-x:hidden;border-bottom:1px solid #414141}
 .variant-sync{display:flex;align-items:center;gap:6px;margin:0 0 8px;color:#d9d9d9;font-size:11px}
 .variant-sync input{margin:0}
-.sidegroup{padding:9px 0;border-bottom:1px solid #414141}
-.sidegroup h2{margin:0 9px 7px;font-size:11px}
-.side-shortcuts{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:0 7px}
-.side-shortcuts button{min-width:0;font-size:11px;text-align:left}
 .appbar{background:#484848;border-color:#353535}
 .appbar nav span:first-child{background:#5c5c5c}
 .appmark{background:#dc8738}
 .appstatus{color:#c9c9c9}
 .library-count{color:#ddd}
 .ed>.cur{padding:0 4px}
-.ed>#tools{max-width:850px;margin:0 auto}
 #library>.library-head{margin-top:6px}
-#library .sidegroup input,#library .sidegroup select{width:calc(100% - 14px);margin:0 7px 5px}
 #layers{padding:10px 13px 14px;background:#505050}
 .layer-row{display:flex;align-items:center;gap:8px;padding:7px 6px;background:#626262;border:1px solid #777;font-size:12px}
 .layer-eye{color:#dedede}
 .layer-thumb{width:22px;height:22px;background:#fff;border:1px solid #bbb}
 .panel-tabs{display:flex;gap:14px;margin:-12px -12px 12px;padding:7px 12px;border-bottom:1px solid #414141;font-size:11px;color:#d9d9d9}
 .panel-tabs span:first-child{font-weight:700;color:white;border-bottom:2px solid #9fc4e3}
-@media(max-width:1100px){.wrap{grid-template-columns:30px 200px minmax(360px,1fr);height:auto;min-height:calc(100vh - 86px)}.col{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));overflow:visible}.ed{border-right:0}}
-@media(max-width:720px){.appbar nav{display:none}.wrap{display:flex;flex-direction:column;height:auto}.toolrail{flex-direction:row;overflow:auto}.toolrail .tool-split{height:20px;width:1px}.wrap>#library{height:300px}.wrap>.ed,.wrap>.col{width:100%}.col{display:flex}.ed{border:0;border-top:1px solid #3b3c40}.appstatus{font-size:10px}}
+.appbar{gap:10px;padding:0 12px}
+.appbar nav{flex:1}
+.appbar nav span{padding:6px 8px;white-space:nowrap}
+.appbar-spacer{flex:1}
+.export-wrap{position:relative;flex:none;margin-left:auto}
+.export-button{padding:7px 15px;font-weight:700;background:#4d82cf;border-color:#6e9ce0;color:white}
+.export-menu{position:absolute;z-index:10;right:0;top:calc(100% + 15px);display:flex;flex-direction:column;gap:5px;width:210px;padding:8px;background:#303135;border:1px solid #5a5b60;box-shadow:0 6px 20px #0008}
+.export-menu[hidden]{display:none}
+.export-menu .pri{width:100%;text-align:left}
+.docbar{background:#35363a}
+.wrap{grid-template-columns:minmax(42px,var(--rail-width)) var(--splitter-width) minmax(180px,var(--library-width)) var(--splitter-width) minmax(280px,1fr) var(--splitter-width) minmax(220px,var(--right-width));height:calc(100vh - 86px)}
+.panel-splitter{position:relative;z-index:2;min-width:0;background:#36373b;cursor:col-resize;touch-action:none;outline:none}
+.panel-splitter::after{position:absolute;top:0;bottom:0;left:3px;width:2px;background:transparent;content:""}
+.panel-splitter:hover,.panel-splitter:focus-visible{background:#4b78a8}
+.panel-splitter:hover::after,.panel-splitter:focus-visible::after{background:#c1ddf7}
+body.resizing-panels{cursor:col-resize;user-select:none}
+.toolrail{display:flex;flex-direction:column;align-items:center;gap:4px;min-height:0;padding:7px 4px;background:#45464a;border-right:1px solid #35363a;overflow-y:auto;overflow-x:hidden}
+.toolrail button{width:36px;height:34px;flex:none;padding:0;background:transparent;border-color:transparent;text-align:center;font-size:13px}
+.toolrail .tool-icon{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vertical-align:middle}
+.toolrail .tool-icon .icon-fill{fill:currentColor}
+.toolrail button.on{background:#4b78a8;border-color:#a8c9e8}
+.toolrail button:disabled{opacity:.35}
+.tool-separator{width:25px;height:1px;flex:none;margin:3px 0;background:#73747a}
+#library{display:flex;flex-direction:column;gap:0;min-width:0;min-height:0;padding:0;background:#505050;border-right:1px solid #414141}
+.library-head{flex:none;padding:12px 12px 0}
+#assetSearch,#assetCategory{flex:none;width:calc(100% - 24px);margin:0 12px 8px}
+#assetList{flex:1;min-height:60px;padding:4px 10px 12px}
+#assetEmpty{flex:none;padding:10px 12px}
+.asset-entry{min-height:66px}
+.asset-icon{width:48px;height:48px}
+.asset-name{white-space:normal;line-height:1.3}
+.asset-preview{width:100%;height:100%;background:repeating-conic-gradient(#777 0 25%,#999 0 50%) 0 0/10px 10px}
+.tool-options{flex:none;padding:10px 12px;border-bottom:1px solid #414141}
+.tool-options h2{margin-bottom:8px}
+.tool-options .option-line{display:flex;align-items:center;gap:6px;margin:5px 0;font-size:11px}
+.tool-options .option-line input[type=checkbox]{margin:0}
+.tool-options select{max-width:100%}
+#presets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;margin:8px 0 0;padding:0;border:0}
+#presets .gl{grid-column:1/-1}
+#presets button{padding:5px;font-size:11px}
+#importControls{display:flex;flex-direction:column;gap:6px;margin-top:9px;padding:0;border:0}
+#importControls .gl{min-width:0}
+#importControls input{width:100%;font-size:10px}
+#importControls select{width:100%;font-size:10px}
+.ed{display:flex;flex-direction:column;min-width:0;min-height:0;padding:0;background:#5d5e62;border:0;overflow:hidden}
+.canvas-head{display:flex;align-items:center;gap:8px;min-height:48px;padding:8px 16px;border-bottom:1px solid #414141;background:#515256}
+.canvas-head strong{color:#9fc4e3}
+.canvas-head small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#bbb}
+.canvas-stage{display:flex;flex:1;min-height:0;align-items:center;justify-content:flex-start;overflow:auto;padding:18px;background:#616267}
+#cv{width:640px;max-width:none;max-height:none;height:auto;flex:none;margin:0 auto;background:white;border:1px solid #262626;box-shadow:0 3px 16px #0008}
+.canvas-footer{display:flex;align-items:center;gap:8px;min-height:38px;padding:5px 10px;background:#4d4e52;border-top:1px solid #414141;font-size:11px}
+.canvas-footer .footer-spacer{flex:1}
+.canvas-footer button{min-width:30px;padding:3px 7px}
+#zoomLabel{min-width:42px;text-align:center}
+.right-panels{display:flex;flex-direction:column;min-width:0;min-height:0;overflow:auto;background:#505050;border-left:1px solid #414141}
+.right-panels>.card{flex:none;border-bottom:1px solid #414141}
+.right-panels #prev{grid-template-columns:repeat(auto-fill,minmax(70px,1fr))}
+.right-panels .pv canvas{width:48px;height:48px}
+.right-panels .pv{font-size:10px}
+.right-panels #msg{min-height:20px}
+.right-panels .save-settings{padding:12px}
+.right-panels .save-settings .row{margin-top:7px}
+.app-only-notice{display:grid;place-content:center;min-height:100vh;padding:32px;text-align:center;background:#202124;color:#e4e4e4}
+.app-only-notice h1{margin:0 0 10px}
+.app-only-notice p{max-width:480px;margin:0;color:#c9c9c9}
+@media(max-width:1120px){.appstatus{display:none}}
 </style></head><body><main>
-<header class="appbar"><div class="appbrand"><span class="appmark">✦</span>Palette-Swap</div><nav><span>ファイル</span><span>編集</span><span>オブジェクト</span><span>選択</span><span>効果</span><span>表示</span><span>ウィンドウ</span><span>ヘルプ</span></nav><div class="app-update"><span id="updateStatus" class="app-update-status">更新を確認できます</span><button id="updateButton" type="button">更新を確認</button></div><div class="appstatus">16 × 16 px · Minecraft Java版</div></header>
+<header class="appbar"><div class="appbrand"><img class="appmark" src="./favicon.ico" alt="">Palette-Swap</div><div class="app-update"><span id="updateStatus" class="app-update-status">更新を確認できます</span><button id="updateButton" type="button">更新を確認</button></div><div class="appstatus">16 × 16 px · Minecraft Java版</div><div class="export-wrap"><button type="button" class="export-button" id="exportButton" aria-expanded="false" aria-controls="saves">エクスポート</button><div class="export-menu" id="saves" hidden><button class="pri" id="s1" type="button">PNGを書き出し</button><button class="pri" id="sz" type="button">ZIPを書き出し</button></div></div></header>
 <div class="docbar" id="docTabs" role="tablist" aria-label="開いているテクスチャ"></div>
-<h1>⛏️ Palette-Swap</h1>
+<h1>Palette-Swap</h1>
 <p class="sub">グリッドは1つだけ描けばOK。輪郭から光までの7段階の明るさで塗ると、全素材の色が自動で当てはまります。</p>
 <div class="wrap">
- <aside class="toolrail" id="toolrail" aria-label="ツール">
-  <button data-t="pen" title="ペン (P)">✎</button><button data-t="eraser" title="消しゴム (E)">⌫</button><button data-t="dropper" title="スポイト (I)">◉</button><button data-t="fill" title="塗りつぶし (F)">▧</button>
-  <span class="tool-split"></span><button data-t="line" title="直線 (L)">╱</button><button data-t="rect" title="四角 (R)">□</button><button data-t="frect" title="塗り四角">▣</button><button data-t="oval" title="円">◯</button>
-  <span class="tool-split"></span><button data-t="sel" title="範囲選択 (S)">⬚</button>
-  <span class="tool-split"></span>
-  <button data-o="copy" title="選択範囲をコピー" aria-label="選択範囲をコピー">▢</button><button data-o="cut" title="選択範囲を切り取り" aria-label="選択範囲を切り取り">✂</button><button data-o="paste" title="選択範囲を貼り付け" aria-label="選択範囲を貼り付け">▣</button><button data-o="del" title="選択範囲を削除" aria-label="選択範囲を削除">⌫</button>
-  <button data-o="fh" title="選択範囲を左右反転" aria-label="選択範囲を左右反転">↔</button><button data-o="fv" title="選択範囲を上下反転" aria-label="選択範囲を上下反転">↕</button><button data-o="rot" title="選択範囲を90°回転" aria-label="選択範囲を90°回転">⟳</button>
-  <button data-o="up" title="選択範囲を1段明るく" aria-label="選択範囲を1段明るく">☼</button><button data-o="dn" title="選択範囲を1段暗く" aria-label="選択範囲を1段暗く">◐</button><button data-o="all" title="全選択" aria-label="全選択">▣</button><button data-o="none" title="選択を解除" aria-label="選択を解除">⊘</button>
+ <aside class="toolrail" id="toolrail" aria-label="ツールバー">
+  <button data-t="pen" class="on" title="ペン (P)" aria-label="ペン"><svg class="tool-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m4 20 4.5-1 10.9-10.9a2.1 2.1 0 0 0-3-3L5.5 16 4 20Z"/><path d="m14.8 7.7 3 3"/></svg></button><button data-t="eraser" title="消しゴム (E)" aria-label="消しゴム"><svg class="tool-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m7.5 19-4-4a2 2 0 0 1 0-2.8l8.7-8.7a2 2 0 0 1 2.8 0l5.4 5.4a2 2 0 0 1 0 2.8L13 19H7.5Z"/><path d="m9 19 6-6"/></svg></button><button data-t="fill" title="塗りつぶし (F)" aria-label="塗りつぶし"><svg class="tool-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m4 11 7-7 8 8-7 7H8l-4-4v-4Z"/><path d="m8 7 8 8M17 17h4"/><path d="M20 20a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"/></svg></button><button data-t="dropper" title="スポイト (I)" aria-label="スポイト"><svg class="tool-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m14 5 5 5M4 20l4.5-1.2L19 8.3a2.1 2.1 0 0 0-3-3L5.5 15.8 4 20Z"/><path d="m12 7 5 5"/></svg></button><button data-t="rep" title="同色置換" aria-label="同色置換"><svg class="tool-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h10l-2.5-2.5M17 17H7l2.5 2.5"/><path d="M17 7a7 7 0 0 1 2 5M7 17a7 7 0 0 1-2-5"/></svg></button>
+  <span class="tool-separator"></span>
+  <button data-t="line" title="直線 (L)" aria-label="直線"><svg class="tool-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19 19 5"/></svg></button><button data-t="rect" title="四角 (R)" aria-label="四角"><svg class="tool-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="4.5" width="15" height="15"/></svg></button><button data-t="frect" title="塗り四角" aria-label="塗り四角"><svg class="tool-icon" viewBox="0 0 24 24" aria-hidden="true"><rect class="icon-fill" x="5" y="5" width="14" height="14"/></svg></button><button data-t="oval" title="円" aria-label="円"><svg class="tool-icon" viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="12" rx="8" ry="6"/></svg></button><button data-t="sel" title="範囲選択 (S)" aria-label="範囲選択"><svg class="tool-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4.5" y="4.5" width="15" height="15" stroke-dasharray="3 2"/></svg></button>
+  <span class="tool-separator"></span>
+  <button data-o="copy" title="選択範囲をコピー" aria-label="コピー">複</button><button data-o="cut" title="選択範囲を切り取り" aria-label="切り取り">切</button><button data-o="paste" title="選択範囲を貼り付け" aria-label="貼り付け">貼</button><button data-o="del" title="選択範囲を削除" aria-label="削除">消</button><button data-o="fh" title="選択範囲を左右反転" aria-label="左右反転">左右</button><button data-o="fv" title="選択範囲を上下反転" aria-label="上下反転">上下</button><button data-o="rot" title="選択範囲を90度回転" aria-label="90度回転">90</button><button data-o="up" title="選択範囲を1段明るく" aria-label="明るく">明</button><button data-o="dn" title="選択範囲を1段暗く" aria-label="暗く">暗</button><button data-o="all" title="全選択" aria-label="全選択">全</button><button data-o="none" title="選択を解除" aria-label="選択解除">解</button>
+  <span class="tool-separator"></span><button id="un" type="button" title="元に戻す">↶</button><button id="re" type="button" title="やり直す">↷</button><button data-m="-1,0" title="左へ移動" aria-label="左へ移動">←</button><button data-m="0,-1" title="上へ移動" aria-label="上へ移動">↑</button><button data-m="0,1" title="下へ移動" aria-label="下へ移動">↓</button><button data-m="1,0" title="右へ移動" aria-label="右へ移動">→</button>
  </aside>
+ <div class="panel-splitter" role="separator" tabindex="0" aria-orientation="vertical" aria-label="ツールバー幅を調整" aria-valuemin="42" aria-valuemax="100" data-resize="rail"></div>
  <aside class="card" id="library">
-  <div class="sidegroup"><h2>ツール</h2><div class="side-shortcuts"><button data-side="undo">↶ 戻す</button><button data-side="redo">↷ やり直す</button><button data-side="new-tab">＋ 新規タブ</button><button data-side="import">↑ 読み込み</button></div></div>
+  <div class="tool-options">
+   <h2>ツール設定</h2>
+   <label class="option-line"><input type="checkbox" id="mir"> 左右対称</label><label class="option-line"><input type="checkbox" id="mirY"> 上下対称</label><label class="option-line"><input type="checkbox" id="grd" checked> グリッド</label><label class="option-line">太さ <select id="bs"><option>1</option><option>2</option><option>3</option></select></label>
+   <div class="grp" id="presets"><span class="gl">テンプレート</span><button data-p="sword">剣</button><button data-p="pick">ツルハシ</button><button data-p="axe">斧</button><button data-p="shovel">シャベル</button><button data-p="hoe">クワ</button><button data-p="spear">槍</button><button data-p="blank">白紙</button></div>
+   <div class="grp" id="importControls"><span class="gl">PNG読み込み</span><input type="file" id="fi" accept="image/*"><select id="im"><option value="near">選択中の素材の色に合わせる</option><option value="auto">色を自動抽出して新素材にする</option></select></div>
+  </div>
   <div class="library-head"><h2>テクスチャ素材</h2><span id="assetCount" class="library-count">読込中</span></div>
   <input type="search" id="assetSearch" placeholder="素材名で検索…">
   <select id="assetCategory" aria-label="素材カテゴリ">
@@ -152,37 +212,29 @@ input[type=text],input[type=search]{padding:7px 9px}
   <div id="assetList" role="listbox" aria-label="Minecraftテクスチャ"></div>
   <div id="assetEmpty" hidden>一致するテクスチャがありません</div>
  </aside>
+ <div class="panel-splitter" role="separator" tabindex="0" aria-orientation="vertical" aria-label="素材パネル幅を調整" aria-valuemin="180" aria-valuemax="480" data-resize="library"></div>
  <section class="card ed">
-  <div class="cur">編集中のテクスチャ: <b id="curm"></b> <small id="assetSource">(素材ライブラリから画像を選択)</small></div>
-  <canvas id="cv" width="640" height="640"></canvas>
-  <div id="tools">
-   <div class="grp"><span class="gl">描く</span><button data-t="pen" class="on" title="P">✏️ ペン</button><button data-t="eraser" title="E">🧽 消しゴム</button><button data-t="fill" title="F">🪣 塗りつぶし</button><button data-t="dropper" title="I">💧 スポイト</button><button data-t="rep">🔁 同色置換</button></div>
-   <div class="grp"><span class="gl">図形・選択</span><button data-t="line" title="L">╱ 直線</button><button data-t="rect" title="R">▭ 四角</button><button data-t="frect">▮ 塗り四角</button><button data-t="oval">◯ 円</button><button data-t="sel" title="S">⬚ 範囲選択</button></div>
-   <div class="grp"><span class="gl">操作</span><button id="un">↶ 戻す</button><button id="re">↷ やり直し</button><span class="mv">移動 <button data-m="-1,0">←</button><button data-m="0,-1">↑</button><button data-m="0,1">↓</button><button data-m="1,0">→</button></span></div>
-   <div class="grp"><span class="gl">設定</span><label><input type="checkbox" id="mir"> 左右対称</label><label><input type="checkbox" id="mirY"> 上下対称</label><label><input type="checkbox" id="grd" checked> グリッド</label><label>太さ <select id="bs"><option>1</option><option>2</option><option>3</option></select></label></div>
-  </div>
-  <div class="grp" id="presets"><span class="gl">テンプレート</span><button data-p="sword">⚔️ 剣</button><button data-p="pick">⛏️ ツルハシ</button><button data-p="axe">🪓 斧</button><button data-p="shovel">🥄 シャベル</button><button data-p="hoe">🌾 クワ</button><button data-p="spear">🔱 槍</button><button data-p="blank">⬜ 白紙</button></div>
-  <div class="grp"><span class="gl">PNG読み込み</span><input type="file" id="fi" accept="image/*"><select id="im"><option value="near">選択中の素材の色に合わせる</option><option value="auto">色を自動抽出して新素材にする</option></select></div>
-  <p class="hint">ドラッグ&amp;ドロップでも読み込めます ／ 数字キー1〜7で色の番号 ／ 矢印キーで移動 ／ Escで選択解除</p>
+  <div class="canvas-head"><strong id="curm"></strong><small id="assetSource">素材ライブラリから画像を選択</small></div>
+  <div class="canvas-stage" id="canvasStage"><canvas id="cv" width="640" height="640"></canvas></div>
+  <div class="canvas-footer"><span>ズーム</span><button type="button" id="zoomOut" aria-label="縮小">−</button><span id="zoomLabel">100%</span><button type="button" id="zoomIn" aria-label="拡大">+</button><button type="button" id="zoomFit">全体表示</button><span class="footer-spacer"></span><span>ツール:</span><strong id="activeToolLabel">ペン</strong><span>16 × 16 px</span></div>
+  <p class="hint">ドラッグで描画 ／ 数字キー1〜7で色を選択 ／ 矢印キーで移動 ／ Escで選択解除</p>
  </section>
- <div class="col">
+ <div class="panel-splitter" role="separator" tabindex="0" aria-orientation="vertical" aria-label="右パネル幅を調整" aria-valuemin="220" aria-valuemax="480" data-resize="right"></div>
+ <aside class="right-panels">
   <section class="card"><h2>描く色(選択中の素材で表示)</h2><div class="row" id="slots" style="margin-top:0"></div>
    <div id="colors" class="row"></div></section>
   <section class="card"><div class="panel-tabs"><span>カラー</span><span>スウォッチ</span><span>ブラシ</span></div><h2 id="variantTitle">素材バリエーション</h2><div id="variantNote" class="library-count"></div><label id="variantSyncControl" class="variant-sync"><input type="checkbox" id="variantSync" checked> ピクセル編集を同期</label><div id="prev"></div>
   <div class="row"><button id="addm">＋ 素材を追加(選択中をコピーして自由に色変更)</button><button id="delm">このカスタム素材を削除</button></div></section>
-  <section class="card"><h2>保存(Java版リソースパック向け・16×16 PNG)</h2>
+  <section class="card save-settings"><h2>エクスポート設定</h2>
    <div class="row" style="margin-top:0">アイテム名: <input type="text" id="name" value="sword"></div>
    <div class="row">pack_format: <input type="text" id="pf" value="55" style="width:60px"> <small>(遊ぶバージョンに合わせて変更)</small></div>
-   <div class="row" id="saves" hidden>
-    <button class="pri" id="s1">選択中の素材をPNG保存</button>
-    <button class="pri" id="sz">全素材をZIP保存</button>
-   </div>
    <div id="msg">ZIPは assets/minecraft/textures/item/ の階層で入ります。</div></section>
   <section class="card" id="layers"><div class="panel-tabs"><span>レイヤー</span><span>アートボード</span></div><h2>編集レイヤー</h2><div class="layer-row"><span class="layer-eye">◉</span><span class="layer-thumb"></span><span id="layerName">テクスチャ画像</span><span>●</span></div><p class="library-count">ピクセル編集 · 16 × 16 px</p></section>
- </div>
+ </aside>
 </div>
 </main>
 <script>
+if(!window.textureStudio){const notice=document.createElement("main"),heading=document.createElement("h1"),description=document.createElement("p");notice.className="app-only-notice";heading.textContent="Palette-Swap for Windows";description.textContent="このソフトはWindowsアプリ版でご利用ください。インストーラーからPalette-Swapを起動してください。";notice.append(heading,description);document.body.replaceChildren(notice);throw new Error("Windowsアプリ版で起動してください。")}
 const N=16,$=s=>document.querySelector(s);
 const MATS=[
 ["wooden","木",["#3a2810","#6b4a1f","#9a6f35","#c29a5a","#dcc08a"]],
@@ -239,14 +291,17 @@ function closeTab(id){const index=tabs.findIndex(entry=>entry.id===id);if(index<
 function all(){$("#curm").textContent=activeVariants?materials()[mat].name:materials()[mat][1];$("#assetSource").textContent=assetName?"元画像: "+assetName:ref?"テンプレート: "+ref:"素材ライブラリから画像を選択";$("#layerName").textContent=documentName(assetName);$("#variantTitle").textContent=variantMode==="armor"?"防具の種類":variantMode==="single"?"単一画像のカラー":variantMode==="color"?"色のバリエーション":variantMode==="item"?"素材バリエーション":"素材バリエーション";$("#variantNote").textContent=variantMode==="single"?"素材違いなし · 1種類のみ編集":!variantSync&&activeVariants&&activeVariants.length>1?"種類ごとに個別編集":variantMode==="color"?"色違いのテクスチャ":"";$("#variantSyncControl").hidden=!(activeVariants&&activeVariants.length>1);$("#variantSync").checked=variantSync;
  $("#addm").disabled=!!activeVariants;$("#delm").disabled=!!activeVariants;draw();buildSlots();buildPrev();buildColors();saveActiveTab();renderTabs()}
 $("#slots").onclick=e=>{const b=e.target.closest(".slot");if(!b)return;slot=+b.dataset.s;if(tool=="eraser")setTool("pen");buildSlots()};
-function setTool(t){tool=t;document.querySelectorAll("#tools [data-t]").forEach(b=>b.classList.toggle("on",b.dataset.t==t));buildSlots()}
-$("#tools").onclick=e=>{const b=e.target.closest("[data-t]");if(b)setTool(b.dataset.t)};
-$("#toolrail").onclick=e=>{const b=e.target.closest("[data-t]");if(b)setTool(b.dataset.t);const operation=e.target.closest("[data-o]");if(operation)operateSelection(operation.dataset.o)};
-$("#library").onclick=e=>{const b=e.target.closest("[data-side]");if(!b)return;if(b.dataset.side=="undo")undo();else if(b.dataset.side=="redo")redo();else if(b.dataset.side=="new-tab")createBlankTab();else if(b.dataset.side=="import")$("#fi").click()};
+const TOOL_LABELS={pen:"ペン",eraser:"消しゴム",fill:"塗りつぶし",dropper:"スポイト",rep:"同色置換",line:"直線",rect:"四角",frect:"塗り四角",oval:"円",sel:"範囲選択"};
+function setTool(t){tool=t;document.querySelectorAll("#toolrail [data-t]").forEach(b=>b.classList.toggle("on",b.dataset.t==t));$("#activeToolLabel").textContent=TOOL_LABELS[t]||t;buildSlots()}
+$("#toolrail").onclick=e=>{const b=e.target.closest("button");if(!b)return;if(b.dataset.t)setTool(b.dataset.t);if(b.dataset.o)operateSelection(b.dataset.o);if(b.id=="un")undo();if(b.id=="re")redo();if(b.dataset.m)mov(...b.dataset.m.split(",").map(Number))};
 $("#mir").onchange=e=>mirror=e.target.checked;
 $("#variantSync").onchange=e=>{if(!activeVariants||activeVariants.length<2){variantSync=true;all();return}if(e.target.checked){saveActiveVariantState();const state={grid:grid.slice(),ref,off:off.slice(),sel:sel&&{...sel}};for(const variant of activeVariants){variant.grid=state.grid.slice();variant.ref=state.ref;variant.off=state.off.slice();variant.sel=state.sel&&{...state.sel};variant.history=[];variant.redo=[]}H=[];R=[];variantSync=true}else{variantSync=false;for(const variant of activeVariants){variant.grid=grid.slice();variant.ref=ref;variant.off=off.slice();variant.sel=sel&&{...sel};variant.history=cloneHistory(H);variant.redo=cloneHistory(R)}}hb();all()};
 $("#presets").onclick=e=>{const b=e.target.closest("[data-p]");if(!b)return;const p=b.dataset.p;
  push();assetName="";armorSlot="";activeVariants=null;variantMode="";variantSuffix="";variantSync=true;mat=Math.min(mat,MATS.length-1);ref=p=="blank"?null:p;off=[0,0];sel=null;grid=p=="blank"?Array(N*N).fill(0):DEFS[p].slice();if(p!="blank")$("#name").value=NAMES[p];buildAssetList();all()};
+let zoom=1;
+function setZoom(value){zoom=Math.max(.25,Math.min(2.5,value));cv.style.width=`${640*zoom}px`;$("#zoomLabel").textContent=`${Math.round(zoom*100)}%`}
+function fitZoom(){const stage=$("#canvasStage"),size=Math.max(160,Math.min(stage.clientWidth-40,stage.clientHeight-40));setZoom(size/640)}
+$("#zoomIn").onclick=()=>setZoom(zoom+.15);$("#zoomOut").onclick=()=>setZoom(zoom-.15);$("#zoomFit").onclick=fitZoom;
 const cell=e=>{const r=cv.getBoundingClientRect();return[Math.floor((e.clientX-r.left)/r.width*N),Math.floor((e.clientY-r.top)/r.height*N)]};
 
 function fill(x,y){if(x<0||y<0||x>=N||y>=N)return;const t=grid[y*N+x];if(t==slot)return;const s=[[x,y]];
@@ -260,7 +315,6 @@ function undo(){if(!H.length)return;R.push(snap());rest(H.pop());hb()}
 function redo(){if(!R.length)return;H.push(snap());rest(R.pop());hb()}
 $("#un").onclick=undo;$("#re").onclick=redo;
 function mov(dx,dy){if(sel){push();const c=cells(sel);put2(sel,Array(sel.w*sel.h).fill(0));sel={...sel,x:sel.x+dx,y:sel.y+dy};put2(sel,c,1);ref=null;all();return}push();const g=Array(256).fill(0);grid.forEach((v,i)=>{g[(((i>>4)+dy)&15)*16+(((i&15)+dx)&15)]=v});grid=g;off=[(off[0]+dx)&15,(off[1]+dy)&15];all()}
-document.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>mov(...b.dataset.m.split(",").map(Number)));
 document.addEventListener("keydown",e=>{if(e.target.tagName=="INPUT"||e.ctrlKey||e.metaKey)return;const d={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[e.key];if(d){e.preventDefault();mov(...d)}});
 let cn=1;
 $("#addm").onclick=()=>{if(activeVariants)return;cn++;MATS.push(["custom"+cn,"カスタム"+cn,MATS[mat][2].slice(),null,(MATS[mat][4]||HAND).slice()]);mat=MATS.length-1;all()};
@@ -333,7 +387,7 @@ function imp(file,sourcePath=file.name||""){assetName=sourcePath;if(assetName)$(
  ref=null;off=[0,0];sel=null;grid=g;all();msg("読み込みました")};im.onerror=()=>{URL.revokeObjectURL(url);msg("画像を読み込めませんでした")};im.src=url}
 const ASSET_LABELS={wooden:"木",stone:"石",iron:"鉄",golden:"金",diamond:"ダイヤモンド",netherite:"ネザライト",copper:"銅",leather:"革",chainmail:"チェーン",turtle:"カメ",helmet:"ヘルメット",chestplate:"チェストプレート",leggings:"レギンス",boots:"ブーツ",sword:"剣",pickaxe:"ツルハシ",axe:"斧",shovel:"シャベル",hoe:"クワ",mace:"メイス",trident:"トライデント",bow:"弓",crossbow:"クロスボウ",shield:"盾",apple:"リンゴ",enchanted:"エンチャント",overlay:"オーバーレイ",wool:"羊毛",carpet:"カーペット",concrete:"コンクリート",concrete_powder:"コンクリートパウダー",terracotta:"テラコッタ",glazed_terracotta:"彩釉テラコッタ",stained_glass:"色付きガラス",stained_glass_pane_top:"色付きガラス板",candle:"ろうそく",candle_lit:"点灯したろうそく"};
 const ROOT_LABELS={block:"ブロック",item:"アイテム",entity:"エンティティ",environment:"環境",gui:"GUI",font:"フォント",particle:"パーティクル",painting:"絵画",colormap:"カラーマップ",map:"地図",misc:"その他",effect:"エフェクト",mob_effect:"状態効果",palettes:"パレット",trims:"防具装飾"};
-const ASSET_ICONS={blocks:"▦",items:"◈",sword:"⚔",pickaxe:"⛏",axe:"🪓",shovel:"♠",hoe:"⚒",otherTools:"⚒",armor:"⛨",food:"◈",entity:"♟",environment:"☁",interface:"▤",other:"▧"};
+const ASSET_ICONS={blocks:"▦",items:"◈",sword:"S",pickaxe:"P",axe:"A",shovel:"T",hoe:"H",otherTools:"W",armor:"A",food:"F",entity:"E",environment:"N",interface:"G",other:"·"};
 const assetFiles=[];
 const ARMOR_VARIANT=/^(?:(leather|chainmail|iron|golden|diamond|netherite|copper)_(helmet|chestplate|leggings|boots)|turtle_helmet)\.png$/;
 function assetCategory(path){const root=path.split("/")[1],name=basename(path).toLowerCase();if(root==="block")return"blocks";if(root==="item"){if(ARMOR_VARIANT.test(name))return"armor";const variant=ITEM_VARIANT_FILE.exec(name);if(variant)return variant[2];if(/(mace|trident|bow|crossbow|shield|fishing_rod|flint_and_steel|shears|brush|spyglass)/.test(name))return"otherTools";if(/(apple|bread|beef|chicken|cod|salmon|porkchop|mutton|rabbit|stew|cookie|melon_slice|carrot|potato|beetroot|berry|chorus_fruit|fish|egg|pie|bottle)/.test(name))return"food";return"items"}if(root==="entity")return"entity";if(root==="environment")return"environment";if(["gui","font"].includes(root))return"interface";return"other"}
@@ -343,15 +397,14 @@ function groupedAssetPaths(){const groups=new Map();for(const path of assetFiles
 function assetEntries(){const groups=groupedAssetPaths(),members=new Set(groups.flatMap(group=>group.files)),entries=groups.concat(assetFiles.filter(path=>!members.has(path)).map(path=>({key:path,path,files:[path],type:assetCategory(path),title:`${ROOT_LABELS[path.split("/")[1]]||path.split("/")[1]} · ${assetDisplayName(path)}`})));return entries}
 function matchesCategory(entry,category){if(category==="all")return true;if(category==="entity")return entry.path.startsWith("textures/entity/");if(category==="environment")return entry.path.startsWith("textures/environment/");if(category==="interface")return entry.path.startsWith("textures/gui/")||entry.path.startsWith("textures/font/");if(category==="other")return!["blocks","armor","sword","pickaxe","axe","shovel","hoe","otherTools","items","food","entity","environment","interface"].includes(entry.type);return entry.type===category}
 function buildAssetList(){const list=$("#assetList"),query=$("#assetSearch").value.trim().toLowerCase(),category=$("#assetCategory").value;list.replaceChildren();const matches=assetEntries().filter(entry=>matchesCategory(entry,category)&&(!query||entry.title.toLowerCase().includes(query)||entry.files.some(path=>path.toLowerCase().includes(query)))),shown=matches.slice(0,250);
- for(const entry of shown){const button=document.createElement("button"),icon=document.createElement("span"),label=document.createElement("span"),selected=entry.files.includes(assetName);button.type="button";button.className="asset-entry"+(selected?" on":"");button.setAttribute("role","option");button.setAttribute("aria-selected",selected?"true":"false");icon.className="asset-icon";icon.textContent=ASSET_ICONS[entry.type]||ASSET_ICONS.other;label.className="asset-name";label.textContent=entry.title;button.append(icon,label);button.onclick=()=>loadBundledTexture(entry.path);list.append(button)}
+ for(const entry of shown){const button=document.createElement("button"),icon=document.createElement("span"),preview=document.createElement("img"),label=document.createElement("span"),selected=entry.files.includes(assetName);button.type="button";button.className="asset-entry"+(selected?" on":"");button.setAttribute("role","option");button.setAttribute("aria-selected",selected?"true":"false");icon.className="asset-icon";preview.className="asset-preview";preview.alt="";preview.src=entry.path;preview.onerror=()=>{preview.remove();icon.textContent=ASSET_ICONS[entry.type]||ASSET_ICONS.other};icon.append(preview);label.className="asset-name";label.textContent=entry.title;button.append(icon,label);button.onclick=()=>loadBundledTexture(entry.path);list.append(button)}
  $("#assetCount").textContent=matches.length>shown.length?`${shown.length}/${matches.length} 点`:`${matches.length} 点`;$("#assetEmpty").hidden=matches.length!==0}
-async function loadBundledTexture(path){if(!window.textureStudio){msg("素材ライブラリの読み込みにはWindowsアプリ版が必要です。");return}
+async function loadBundledTexture(path){
  const existing=tabs.find(tab=>tab.state&&tab.state.assetName===path);if(existing){switchTab(existing.id);return}
  try{const bytes=await window.textureStudio.readTexture(path);createBlankTab();await prepareTextureVariants(path);assetName=path;$("#name").value=basename(path).replace(/\.png$/i,"");imp(new File([bytes],basename(path),{type:"image/png"}),path)}
  catch(error){msg("テクスチャを読み込めませんでした: "+(error&&error.message||error))}}
 async function importTextureFile(file){createBlankTab();armorSlot="";const palette=MATS[mat][2].concat(MATS[mat][4]||HAND);activeVariants=[{id:"original",name:"1種類",filename:`textures/item/${file.name||"item.png"}`,palette}];variantMode="single";variantSuffix="";mat=0;imp(file,`textures/item/${file.name||"item.png"}`)}
-if(window.textureStudio){window.textureStudio.listTextures().then(files=>{assetFiles.push(...files);buildAssetList()}).catch(error=>{msg("素材一覧を読み込めませんでした: "+(error&&error.message||error));$("#assetCount").textContent="読込失敗"})}
-else{$("#assetCount").textContent="アプリ版で利用できます";$("#assetEmpty").hidden=false;$("#assetEmpty").textContent="素材ライブラリはWindowsアプリ版で利用できます"}
+window.textureStudio.listTextures().then(files=>{assetFiles.push(...files);buildAssetList()}).catch(error=>{msg("素材一覧を読み込めませんでした: "+(error&&error.message||error));$("#assetCount").textContent="読込失敗"});
 $("#assetSearch").oninput=buildAssetList;$("#assetCategory").onchange=buildAssetList;
 $("#fi").onchange=e=>{const f=e.target.files[0];if(f)importTextureFile(f);e.target.value=""};
 cv.ondragover=e=>e.preventDefault();cv.ondrop=e=>{e.preventDefault();const f=e.dataTransfer.files[0];if(f)importTextureFile(f)};
@@ -359,8 +412,8 @@ cv.ondragover=e=>e.preventDefault();cv.ondrop=e=>{e.preventDefault();const f=e.d
 const msg=t=>$("#msg").textContent=t,blob=c=>new Promise(r=>c.toBlob(r,"image/png")),
  nm=()=>($("#name").value.trim()||"item").replace(/[^a-z0-9_]/gi,"_").toLowerCase();
 function showUpdateStatus(status){const label=$("#updateStatus"),button=$("#updateButton");button.disabled=false;switch(status.state){case"checking":label.textContent="更新を確認中…";button.disabled=true;break;case"available":label.textContent=`バージョン ${status.version} をダウンロード中…`;button.disabled=true;break;case"downloading":label.textContent=`更新をダウンロード中 ${status.percent}%`;button.disabled=true;break;case"downloaded":label.textContent=`バージョン ${status.version} を準備しました`;button.textContent="再起動して更新";break;case"current":label.textContent=`最新版です（${status.version}）`;button.textContent="更新を確認";break;case"development":label.textContent="更新確認はインストール版で利用できます";break;case"error":label.textContent=`更新確認に失敗: ${status.message}`;button.textContent="再試行";break;default:label.textContent="更新を確認できます"}}
-$("#updateButton").onclick=async()=>{const button=$("#updateButton");if(button.textContent==="再起動して更新"){try{await window.textureStudio.installUpdate()}catch(error){showUpdateStatus({state:"error",message:error.message||error})}return}if(!window.textureStudio){showUpdateStatus({state:"development"});return}button.disabled=true;try{await window.textureStudio.checkForUpdates()}catch(error){showUpdateStatus({state:"error",message:error.message||error})}};
-if(window.textureStudio)window.textureStudio.onUpdateStatus(showUpdateStatus);
+$("#updateButton").onclick=async()=>{const button=$("#updateButton");if(button.textContent==="再起動して更新"){try{await window.textureStudio.installUpdate()}catch(error){showUpdateStatus({state:"error",message:error.message||error})}return}button.disabled=true;try{await window.textureStudio.checkForUpdates()}catch(error){showUpdateStatus({state:"error",message:error.message||error})}};
+window.textureStudio.onUpdateStatus(showUpdateStatus);
 function zip(files){const T=new Uint32Array(256).map((_,n)=>{for(let k=0;k<8;k++)n=n&1?0xEDB88320^n>>>1:n>>>1;return n>>>0});
  const crc=d=>{let c=-1;for(const b of d)c=T[(c^b)&255]^c>>>8;return(c^-1)>>>0};
  const E=new TextEncoder(),parts=[],cen=[];let off=0;
@@ -372,13 +425,33 @@ function zip(files){const T=new Uint32Array(256).map((_,n)=>{for(let k=0;k<8;k++
  const cs=cen.reduce((a,b)=>a+b.byteLength,0),e=new DataView(new ArrayBuffer(22));
  e.setUint32(0,0x06054b50,true);e.setUint16(8,files.length,true);e.setUint16(10,files.length,true);e.setUint32(12,cs,true);e.setUint32(16,off,true);
  return new Blob([...parts,...cen,e.buffer],{type:"application/zip"})}
-async function sv(f,d){try{const b=await d;if(window.textureStudio){const r=await window.textureStudio.saveFile({filename:f,data:new Uint8Array(await b.arrayBuffer())});if(r.canceled){msg("キャンセルしました");return}}else{const u=URL.createObjectURL(b),a=document.createElement("a");a.href=u;a.download=f;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)}msg("保存しました: "+f)}catch(e){msg("保存できませんでした: "+(e&&e.message||e))}}
+async function sv(f,d){try{const b=await d,r=await window.textureStudio.saveFile({filename:f,data:new Uint8Array(await b.arrayBuffer())});if(r.canceled){msg("キャンセルしました");return}msg("保存しました: "+f)}catch(e){msg("保存できませんでした: "+(e&&e.message||e))}}
 const outputFilename=i=>{if(variantMode==="armor")return`${activeVariants[i].id}_${armorSlot}.png`;if(variantMode==="item")return basename(activeVariants[i].filename);if(variantMode==="color")return`${activeVariants[i].id}_${variantSuffix}.png`;if(variantMode==="single")return`${nm()}.png`;return`${MATS[i][0]}_${nm()}.png`};
 const outputTexturePath=i=>{if(variantMode==="armor"||variantMode==="item"||variantMode==="color")return`${folder(activeVariants[i].filename)}/${outputFilename(i)}`;if(assetName.startsWith("textures/"))return`${folder(assetName)}/${outputFilename(i)}`;return`textures/item/${outputFilename(i)}`};
 $("#s1").onclick=()=>sv(outputFilename(mat),blob(render(mat,1)));
 $("#sz").onclick=async()=>{const fs=[],active=materials();for(let i=0;i<active.length;i++){const b=await blob(render(i,1)),filename=outputTexturePath(i);
  fs.push({name:`assets/minecraft/${filename}`,data:new Uint8Array(await b.arrayBuffer())})}
  fs.push({name:"pack.mcmeta",data:new TextEncoder().encode(JSON.stringify({pack:{pack_format:+$("#pf").value||55,description:"Texture Studio"}}))});sv("textures.zip",zip(fs))};
-$("#saves").hidden=false;
+$("#saves").hidden=true;
+const workspace=$(".wrap"),splitterDefaults={rail:46,library:254,right:280},splitterLimits={rail:[42,100],library:[180,480],right:[220,480]},splitterKeys={rail:"--rail-width",library:"--library-width",right:"--right-width"};
+for(const [key,variable] of Object.entries(splitterKeys)){const stored=Number(localStorage.getItem(`paletteSwap.${key}Width`)),[min,max]=splitterLimits[key];if(Number.isFinite(stored)&&stored>=min&&stored<=max)workspace.style.setProperty(variable,`${stored}px`)}
+const splitterSize=()=>parseFloat(getComputedStyle(workspace).getPropertyValue("--splitter-width"));
+const panelSize=key=>parseFloat(getComputedStyle(workspace).getPropertyValue(splitterKeys[key]));
+function updateSplitter(splitter,size){const key=splitter.dataset.resize,[min,max]=splitterLimits[key],next=Math.min(max,Math.max(min,Math.round(size)));workspace.style.setProperty(splitterKeys[key],`${next}px`);splitter.setAttribute("aria-valuenow",String(next));splitter.setAttribute("aria-valuetext",`${next} px`);localStorage.setItem(`paletteSwap.${key}Width`,String(next))}
+for(const splitter of document.querySelectorAll(".panel-splitter")){
+ const key=splitter.dataset.resize,[min,max]=splitterLimits[key];
+ splitter.setAttribute("aria-valuenow",String(panelSize(key)));splitter.setAttribute("aria-valuetext",`${Math.round(panelSize(key))} px`);
+ splitter.addEventListener("pointerdown",event=>{if(event.button!==0)return;event.preventDefault();splitter.setPointerCapture(event.pointerId);document.body.classList.add("resizing-panels")});
+ splitter.addEventListener("pointermove",event=>{if(!splitter.hasPointerCapture(event.pointerId))return;const bounds=workspace.getBoundingClientRect(),halfSplitter=splitterSize()/2,size=key==="rail"?event.clientX-bounds.left-halfSplitter:key==="library"?event.clientX-bounds.left-panelSize("rail")-splitterSize()-halfSplitter:bounds.right-event.clientX-halfSplitter;updateSplitter(splitter,size)});
+ const stopResize=event=>{if(!splitter.hasPointerCapture(event.pointerId))return;splitter.releasePointerCapture(event.pointerId);document.body.classList.remove("resizing-panels");splitter.setAttribute("aria-valuetext",`${panelSize(key)} px`)};
+ splitter.addEventListener("pointerup",stopResize);splitter.addEventListener("pointercancel",stopResize);
+ splitter.addEventListener("keydown",event=>{if(event.key==="Home"){updateSplitter(splitter,splitterDefaults[key]);splitter.setAttribute("aria-valuetext",`${splitterDefaults[key]} px`);event.preventDefault();return}if(event.key!=="ArrowLeft"&&event.key!=="ArrowRight")return;const direction=event.key==="ArrowRight"?1:-1;updateSplitter(splitter,panelSize(key)+direction*(key==="right"?-1:1)*10);splitter.setAttribute("aria-valuetext",`${panelSize(key)} px`);event.preventDefault()});
+ splitter.addEventListener("dblclick",()=>{updateSplitter(splitter,splitterDefaults[key]);splitter.setAttribute("aria-valuetext",`${splitterDefaults[key]} px`)});
+}
+$("#exportButton").onclick=()=>{const open=$("#saves").hidden;$("#saves").hidden=!open;$("#exportButton").setAttribute("aria-expanded",String(open))};
+$("#saves").onclick=e=>{if(e.target.closest("button")){$("#saves").hidden=true;$("#exportButton").setAttribute("aria-expanded","false")}};
+document.addEventListener("pointerdown",e=>{if(!e.target.closest(".export-wrap")){$("#saves").hidden=true;$("#exportButton").setAttribute("aria-expanded","false")}});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){$("#saves").hidden=true;$("#exportButton").setAttribute("aria-expanded","false")}});
 createBlankTab();
+fitZoom();
 </script></body></html>
