@@ -6,6 +6,10 @@ const path = require("node:path");
 const textureDirectory = path.join(__dirname, "textures");
 let mainWindow;
 let updateDownloaded = false;
+let pendingProjectPath = process.argv.find(argument =>
+  argument.toLowerCase().endsWith(".psproj")
+);
+const hasSingleInstanceLock = app.requestSingleInstanceLock();
 
 autoUpdater.autoDownload = true;
 autoUpdater.autoInstallOnAppQuit = true;
@@ -121,6 +125,68 @@ ipcMain.handle("save-file", async (event, { filename, data } = {}) => {
   return { canceled: false };
 });
 
+ipcMain.handle("save-project", async (event, contents) => {
+  if (typeof contents !== "string") {
+    throw new TypeError("プロジェクトのデータが正しくありません。");
+  }
+  if (Buffer.byteLength(contents, "utf8") > 20 * 1024 * 1024) {
+    throw new RangeError("プロジェクトファイルが大きすぎます。");
+  }
+
+  const owner = BrowserWindow.fromWebContents(event.sender);
+  const { canceled, filePath } = await dialog.showSaveDialog(owner, {
+    defaultPath: "無題.psproj",
+    filters: [{ name: "PaletteSwap プロジェクト", extensions: ["psproj"] }]
+  });
+  if (canceled || !filePath) return { canceled: true };
+
+  const projectPath = filePath.toLowerCase().endsWith(".psproj")
+    ? filePath
+    : `${filePath}.psproj`;
+  await fs.writeFile(projectPath, contents, "utf8");
+  return { canceled: false };
+});
+
+ipcMain.handle("open-project", async event => {
+  const owner = BrowserWindow.fromWebContents(event.sender);
+  const { canceled, filePaths } = await dialog.showOpenDialog(owner, {
+    properties: ["openFile"],
+    filters: [{ name: "PaletteSwap プロジェクト", extensions: ["psproj"] }]
+  });
+  if (canceled || !filePaths[0]) return { canceled: true };
+
+  const filePath = filePaths[0];
+  return { canceled: false, ...await readProjectFile(filePath) };
+});
+
+async function readProjectFile(filePath) {
+  if (!filePath.toLowerCase().endsWith(".psproj")) {
+    throw new TypeError("PaletteSwapプロジェクト（.psproj）を選択してください。");
+  }
+  const stats = await fs.stat(filePath);
+  if (stats.size > 20 * 1024 * 1024) {
+    throw new RangeError("プロジェクトファイルが大きすぎます。");
+  }
+  return {
+    filename: path.basename(filePath),
+    contents: await fs.readFile(filePath, "utf8")
+  };
+}
+
+async function openProjectFromPath(filePath) {
+  try {
+    const project = await readProjectFile(filePath);
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.webContents.send("open-project-file", project);
+    }
+  } catch (error) {
+    console.error("プロジェクトを開けませんでした:", error);
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.webContents.send("open-project-error", error.message);
+    }
+  }
+}
+
 function createWindow() {
   const window = new BrowserWindow({
     width: 1440,
@@ -138,13 +204,40 @@ function createWindow() {
   });
 
   mainWindow = window;
+  window.webContents.once("did-finish-load", () => {
+    if (pendingProjectPath) {
+      const filePath = pendingProjectPath;
+      pendingProjectPath = null;
+      openProjectFromPath(filePath);
+    }
+  });
   window.on("closed", () => {
     if (mainWindow === window) mainWindow = null;
   });
   window.loadFile(path.join(__dirname, "マイクラ テクスチャ工房.html"));
 }
 
+if (hasSingleInstanceLock) {
+  app.on("second-instance", (_event, argv) => {
+    const projectPath = argv.find(argument =>
+      argument.toLowerCase().endsWith(".psproj")
+    );
+    if (projectPath) {
+      if (mainWindow && !mainWindow.webContents.isLoading()) {
+        openProjectFromPath(projectPath);
+      } else {
+        pendingProjectPath = projectPath;
+      }
+    }
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore();
+      mainWindow.focus();
+    }
+  });
+}
+
 app.whenReady().then(() => {
+  if (!hasSingleInstanceLock) return;
   createWindow();
   if (app.isPackaged) {
     setTimeout(() => {

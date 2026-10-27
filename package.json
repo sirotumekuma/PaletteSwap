@@ -44,6 +44,14 @@
         "releaseNotesFile": "release-notes.md"
       }
     },
+    "fileAssociations": [
+      {
+        "ext": "psproj",
+        "name": "PaletteSwap Project",
+        "description": "PaletteSwap texture project",
+        "role": "Editor"
+      }
+    ],
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,

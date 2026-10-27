@@ -183,7 +183,7 @@ body.resizing-panels{cursor:col-resize;user-select:none}
 .app-only-notice p{max-width:480px;margin:0;color:#c9c9c9}
 @media(max-width:1120px){.appstatus{display:none}}
 </style></head><body><main>
-<header class="appbar"><div class="appbrand"><img class="appmark" src="./favicon.ico" alt="">Palette-Swap</div><div class="app-update"><span id="updateStatus" class="app-update-status">更新を確認できます</span><button id="updateButton" type="button">更新を確認</button></div><div class="appstatus">16 × 16 px · Minecraft Java版</div><div class="export-wrap"><button type="button" class="export-button" id="exportButton" aria-expanded="false" aria-controls="saves">エクスポート</button><div class="export-menu" id="saves" hidden><button class="pri" id="s1" type="button">PNGを書き出し</button><button class="pri" id="sz" type="button">ZIPを書き出し</button></div></div></header>
+<header class="appbar"><div class="appbrand"><img class="appmark" src="./favicon.ico" alt="">Palette-Swap</div><div class="app-update"><span id="updateStatus" class="app-update-status">更新を確認できます</span><button id="updateButton" type="button">更新を確認</button></div><div class="appstatus">16 × 16 px · Minecraft Java版</div><div class="export-wrap"><button type="button" class="export-button" id="exportButton" aria-expanded="false" aria-controls="saves">保存 / 書き出し</button><div class="export-menu" id="saves" hidden><button class="pri" id="projectSave" type="button">プロジェクトを保存 (.psproj)</button><button class="pri" id="projectOpen" type="button">プロジェクトを開く</button><button class="pri" id="s1" type="button">PNGを書き出し</button><button class="pri" id="sz" type="button">ZIPを書き出し</button></div></div></header>
 <div class="docbar" id="docTabs" role="tablist" aria-label="開いているテクスチャ"></div>
 <h1>Palette-Swap</h1>
 <p class="sub">グリッドは1つだけ描けばOK。輪郭から光までの7段階の明るさで塗ると、全素材の色が自動で当てはまります。</p>
@@ -282,9 +282,9 @@ function documentName(path){return path?path.split("/").pop():"新規テクス�
 const cloneHistory=history=>history.map(entry=>({g:entry.g.slice(),r:entry.r,o:entry.o.slice()}));
 function saveActiveVariantState(){if(!activeVariants||variantSync)return;const variant=activeVariants[mat];if(!variant)return;variant.grid=grid.slice();variant.ref=ref;variant.off=off.slice();variant.sel=sel&&{...sel};variant.history=cloneHistory(H);variant.redo=cloneHistory(R)}
 function switchVariant(index){if(index===mat)return;if(!variantSync)saveActiveVariantState();mat=index;if(!variantSync){const variant=activeVariants[mat];grid=variant.grid?variant.grid.slice():grid.slice();ref=variant.ref??null;off=variant.off?variant.off.slice():[0,0];sel=variant.sel&&{...variant.sel};H=cloneHistory(variant.history||[]);R=cloneHistory(variant.redo||[]);hb()}all()}
-function saveActiveTab(){const tab=tabs.find(entry=>entry.id===activeTabId);if(!tab)return;saveActiveVariantState();tab.title=documentName(assetName);tab.state={grid:grid.slice(),mat,slot,tool,mirror,mirrorY,ref,off:off.slice(),assetName,armorSlot,variantMode,variantSuffix,variantSync,customPalette:MATS[7][2].slice(),customDetails:(MATS[7][4]||[]).slice(),activeVariants:activeVariants&&activeVariants.map(entry=>({...entry,palette:entry.palette.slice(),grid:entry.grid&&entry.grid.slice(),off:entry.off&&entry.off.slice(),sel:entry.sel&&{...entry.sel},history:entry.history&&cloneHistory(entry.history),redo:entry.redo&&cloneHistory(entry.redo)})),sel:sel&&{...sel},history:cloneHistory(H),redo:cloneHistory(R),name:$("#name").value}}
+function saveActiveTab(){const tab=tabs.find(entry=>entry.id===activeTabId);if(!tab)return;saveActiveVariantState();tab.title=documentName(assetName);tab.state={grid:grid.slice(),mat,slot,tool,mirror,mirrorY,ref,off:off.slice(),assetName,armorSlot,variantMode,variantSuffix,variantSync,customPalette:MATS[7][2].slice(),customDetails:(MATS[7][4]||[]).slice(),customMaterials:MATS.slice(7).map(material=>({id:material[0],name:material[1],palette:material[2].slice(),details:(material[4]||HAND).slice()})),activeVariants:activeVariants&&activeVariants.map(entry=>({...entry,palette:entry.palette.slice(),grid:entry.grid&&entry.grid.slice(),off:entry.off&&entry.off.slice(),sel:entry.sel&&{...entry.sel},history:entry.history&&cloneHistory(entry.history),redo:entry.redo&&cloneHistory(entry.redo)})),sel:sel&&{...sel},history:cloneHistory(H),redo:cloneHistory(R),name:$("#name").value}}
 function renderTabs(){const bar=$("#docTabs");bar.replaceChildren();for(const tab of tabs){const button=document.createElement("button"),title=document.createElement("span"),close=document.createElement("span");button.type="button";button.className="doc-tab"+(tab.id===activeTabId?" active":"");button.setAttribute("role","tab");button.setAttribute("aria-selected",tab.id===activeTabId?"true":"false");button.title=tab.title;title.textContent=tab.title;close.className="doc-close";close.textContent="×";close.title="タブを閉じる";close.onclick=event=>{event.stopPropagation();closeTab(tab.id)};button.append(title,close);button.onclick=()=>switchTab(tab.id);bar.append(button)}const add=document.createElement("button");add.type="button";add.className="doc-add";add.textContent="+";add.title="新しいテクスチャを開く";add.onclick=createBlankTab;bar.append(add)}
-function activateTab(tab){activeTabId=tab.id;const state=tab.state;grid=state.grid.slice();mat=state.mat;slot=state.slot;tool=state.tool;mirror=state.mirror;mirrorY=state.mirrorY;ref=state.ref;off=state.off.slice();assetName=state.assetName;armorSlot=state.armorSlot;variantMode=state.variantMode;variantSuffix=state.variantSuffix;variantSync=state.variantSync!==false;MATS[7][2]=state.customPalette.slice();MATS[7][4]=state.customDetails.slice();activeVariants=state.activeVariants&&state.activeVariants.map(entry=>({...entry,palette:entry.palette.slice(),grid:entry.grid&&entry.grid.slice(),off:entry.off&&entry.off.slice(),sel:entry.sel&&{...entry.sel},history:entry.history&&cloneHistory(entry.history),redo:entry.redo&&cloneHistory(entry.redo)}));sel=state.sel&&{...state.sel};H=cloneHistory(state.history);R=cloneHistory(state.redo);$("#name").value=state.name;$("#mir").checked=mirror;$("#mirY").checked=mirrorY;setTool(tool);all()}
+function activateTab(tab){activeTabId=tab.id;const state=tab.state;grid=state.grid.slice();mat=state.mat;slot=state.slot;tool=state.tool;mirror=state.mirror;mirrorY=state.mirrorY;ref=state.ref;off=state.off.slice();assetName=state.assetName;armorSlot=state.armorSlot;variantMode=state.variantMode;variantSuffix=state.variantSuffix;variantSync=state.variantSync!==false;if(state.customMaterials){MATS.splice(7,MATS.length,...state.customMaterials.map(material=>[material.id,material.name,material.palette.slice(),null,material.details.slice()]))}else{MATS[7][2]=state.customPalette.slice();MATS[7][4]=state.customDetails.slice()}activeVariants=state.activeVariants&&state.activeVariants.map(entry=>({...entry,palette:entry.palette.slice(),grid:entry.grid&&entry.grid.slice(),off:entry.off&&entry.off.slice(),sel:entry.sel&&{...entry.sel},history:entry.history&&cloneHistory(entry.history),redo:entry.redo&&cloneHistory(entry.redo)}));sel=state.sel&&{...state.sel};H=cloneHistory(state.history);R=cloneHistory(state.redo);$("#name").value=state.name;$("#mir").checked=mirror;$("#mirY").checked=mirrorY;setTool(tool);all()}
 function switchTab(id){if(id===activeTabId)return;saveActiveTab();const tab=tabs.find(entry=>entry.id===id);if(tab)activateTab(tab)}
 function createBlankTab(){saveActiveTab();const tab={id:nextTabId++,title:"新規テクスチャ",state:null};tabs.push(tab);grid=SW.flat();grid.fill(0);mat=2;slot=3;tool="pen";mirror=false;mirrorY=false;ref=null;off=[0,0];assetName="";armorSlot="";activeVariants=null;variantMode="";variantSuffix="";variantSync=true;sel=null;H=[];R=[];$("#name").value="item";$("#mir").checked=false;$("#mirY").checked=false;activeTabId=tab.id;all()}
 function closeTab(id){const index=tabs.findIndex(entry=>entry.id===id);if(index<0)return;const wasActive=id===activeTabId;tabs.splice(index,1);if(!tabs.length){activeTabId=0;createBlankTab();return}if(wasActive)activateTab(tabs[Math.max(0,index-1)]);else{saveActiveTab();renderTabs()}}
@@ -317,8 +317,8 @@ $("#un").onclick=undo;$("#re").onclick=redo;
 function mov(dx,dy){if(sel){push();const c=cells(sel);put2(sel,Array(sel.w*sel.h).fill(0));sel={...sel,x:sel.x+dx,y:sel.y+dy};put2(sel,c,1);ref=null;all();return}push();const g=Array(256).fill(0);grid.forEach((v,i)=>{g[(((i>>4)+dy)&15)*16+(((i&15)+dx)&15)]=v});grid=g;off=[(off[0]+dx)&15,(off[1]+dy)&15];all()}
 document.addEventListener("keydown",e=>{if(e.target.tagName=="INPUT"||e.ctrlKey||e.metaKey)return;const d={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[e.key];if(d){e.preventDefault();mov(...d)}});
 let cn=1;
-$("#addm").onclick=()=>{if(activeVariants)return;cn++;MATS.push(["custom"+cn,"カスタム"+cn,MATS[mat][2].slice(),null,(MATS[mat][4]||HAND).slice()]);mat=MATS.length-1;all()};
-$("#delm").onclick=()=>{if(activeVariants)return;if(MATS.length<2||!isC(mat))return msg("組み込みの素材は削除できません");MATS.splice(mat,1);mat=Math.min(mat,MATS.length-1);all()};
+$("#addm").onclick=()=>{if(activeVariants)return;do{cn++}while(MATS.some(material=>material[0]==="custom"+cn));MATS.push(["custom"+cn,"カスタム"+cn,MATS[mat][2].slice(),null,(MATS[mat][4]||HAND).slice()]);mat=MATS.length-1;all()};
+$("#delm").onclick=()=>{if(activeVariants)return;if(MATS.length<2||!isC(mat))return msg("組み込みの素材は削除できません");if(MATS[mat][0]==="custom")return msg("基本のカスタム素材は削除できません");MATS.splice(mat,1);mat=Math.min(mat,MATS.length-1);all()};
 document.addEventListener("keydown",e=>{if(!(e.ctrlKey||e.metaKey)||e.target.tagName=="INPUT")return;const k=e.key.toLowerCase();if(k=="z"){e.preventDefault();e.shiftKey?redo():undo()}else if(k=="y"){e.preventDefault();redo()}});
 hb();
 function put(x,y,v){if(x<0||y<0||x>=N||y>=N)return;grid[y*N+x]=v;if(mirror)grid[y*N+N-1-x]=v;if(mirrorY)grid[(N-1-y)*N+x]=v;if(mirror&&mirrorY)grid[(N-1-y)*N+N-1-x]=v}
@@ -426,6 +426,58 @@ function zip(files){const T=new Uint32Array(256).map((_,n)=>{for(let k=0;k<8;k++
  e.setUint32(0,0x06054b50,true);e.setUint16(8,files.length,true);e.setUint16(10,files.length,true);e.setUint32(12,cs,true);e.setUint32(16,off,true);
  return new Blob([...parts,...cen,e.buffer],{type:"application/zip"})}
 async function sv(f,d){try{const b=await d,r=await window.textureStudio.saveFile({filename:f,data:new Uint8Array(await b.arrayBuffer())});if(r.canceled){msg("キャンセルしました");return}msg("保存しました: "+f)}catch(e){msg("保存できませんでした: "+(e&&e.message||e))}}
+const validGrid=value=>Array.isArray(value)&&value.length===256&&value.every(pixel=>Number.isInteger(pixel)&&pixel>=0&&pixel<=11);
+const validOffset=value=>Array.isArray(value)&&value.length===2&&value.every(offset=>Number.isInteger(offset)&&offset>=0&&offset<=15);
+const validColors=value=>Array.isArray(value)&&value.length>=1&&value.length<=11&&value.every(color=>typeof color==="string"&&/^#[0-9a-f]{6}$/i.test(color));
+const validSelection=value=>value===null||(value&&Number.isInteger(value.x)&&value.x>=-16&&value.x<=31&&Number.isInteger(value.y)&&value.y>=-16&&value.y<=31&&Number.isInteger(value.w)&&value.w>=1&&value.w<=16&&Number.isInteger(value.h)&&value.h>=1&&value.h<=16);
+const validHistory=value=>Array.isArray(value)&&value.length<=100&&value.every(entry=>entry&&validGrid(entry.g)&&(entry.r===null||Object.prototype.hasOwnProperty.call(DEFS,entry.r))&&validOffset(entry.o));
+function validProjectState(state){
+ if(!state||typeof state!=="object"||!validGrid(state.grid)||!Number.isInteger(state.mat)||!Number.isInteger(state.slot)||state.slot<1||state.slot>11)return false;
+ if(!["pen","eraser","fill","dropper","rep","line","rect","frect","oval","sel"].includes(state.tool))return false;
+ if(typeof state.mirror!=="boolean"||typeof state.mirrorY!=="boolean"||!validOffset(state.off)||!validSelection(state.sel))return false;
+ if(state.ref!==null&&!Object.prototype.hasOwnProperty.call(DEFS,state.ref))return false;
+ if(!["","armor","item","color","single"].includes(state.variantMode)||typeof state.variantSuffix!=="string"||typeof state.assetName!=="string"||typeof state.armorSlot!=="string"||typeof state.name!=="string")return false;
+ if(typeof state.variantSync!=="boolean"||!validHistory(state.history)||!validHistory(state.redo))return false;
+ if(!Array.isArray(state.customMaterials)||state.customMaterials.length<1||state.customMaterials.length>100)return false;
+ const ids=new Set();
+ for(const material of state.customMaterials){
+  if(!material||typeof material.id!=="string"||!/^custom\d*$/.test(material.id)||ids.has(material.id)||typeof material.name!=="string"||!validColors(material.palette)||!Array.isArray(material.details)||material.details.length>4||!material.details.every(color=>typeof color==="string"&&/^#[0-9a-f]{6}$/i.test(color)))return false;
+  ids.add(material.id)
+ }
+ if(state.activeVariants!==null){
+  if(!Array.isArray(state.activeVariants)||state.activeVariants.length<1||state.activeVariants.length>100)return false;
+  for(const variant of state.activeVariants){
+   if(!variant||typeof variant.id!=="string"||typeof variant.name!=="string"||typeof variant.filename!=="string"||!validColors(variant.palette))return false;
+   if(variant.grid!==undefined&&!validGrid(variant.grid))return false;
+   if(variant.off!==undefined&&!validOffset(variant.off))return false;
+   if(variant.sel!==undefined&&!validSelection(variant.sel))return false;
+   if(variant.history!==undefined&&!validHistory(variant.history))return false;
+   if(variant.redo!==undefined&&!validHistory(variant.redo))return false
+  }
+  if(state.mat>=state.activeVariants.length)return false
+ }else if(state.mat>=7+state.customMaterials.length)return false;
+ return true
+}
+function parseProject(contents){
+ const project=JSON.parse(contents);
+ if(!project||project.format!=="PaletteSwapProject"||project.version!==1||!Array.isArray(project.tabs)||project.tabs.length<1||project.tabs.length>50)throw new Error("対応していないプロジェクトファイルです。");
+ if(!project.tabs.every(tab=>tab&&typeof tab.title==="string"&&validProjectState(tab.state)))throw new Error("プロジェクトの内容が壊れているか、形式に対応していません。");
+ return project
+}
+$("#projectSave").onclick=async()=>{
+ try{saveActiveTab();const contents=JSON.stringify({format:"PaletteSwapProject",version:1,tabs:tabs.map(tab=>({title:tab.title,state:tab.state}))});const result=await window.textureStudio.saveProject(contents);msg(result.canceled?"保存をキャンセルしました":"プロジェクトを保存しました")}
+ catch(error){msg("プロジェクトを保存できませんでした: "+(error&&error.message||error))}
+};
+function importProjectFile(result){
+ try{const project=parseProject(result.contents);tabs=project.tabs.map(tab=>({id:nextTabId++,title:tab.title,state:tab.state}));activeTabId=0;activateTab(tabs[0]);msg("プロジェクトを読み込みました: "+result.filename)}
+ catch(error){msg("プロジェクトを読み込めませんでした: "+(error&&error.message||error))}
+}
+$("#projectOpen").onclick=async()=>{
+ try{const result=await window.textureStudio.openProject();if(result.canceled){msg("読み込みをキャンセルしました");return}importProjectFile(result)}
+ catch(error){msg("プロジェクトを読み込めませんでした: "+(error&&error.message||error))}
+};
+window.textureStudio.onOpenProjectFile(importProjectFile);
+window.textureStudio.onOpenProjectError(message=>msg("プロジェクトを読み込めませんでした: "+message));
 const outputFilename=i=>{if(variantMode==="armor")return`${activeVariants[i].id}_${armorSlot}.png`;if(variantMode==="item")return basename(activeVariants[i].filename);if(variantMode==="color")return`${activeVariants[i].id}_${variantSuffix}.png`;if(variantMode==="single")return`${nm()}.png`;return`${MATS[i][0]}_${nm()}.png`};
 const outputTexturePath=i=>{if(variantMode==="armor"||variantMode==="item"||variantMode==="color")return`${folder(activeVariants[i].filename)}/${outputFilename(i)}`;if(assetName.startsWith("textures/"))return`${folder(assetName)}/${outputFilename(i)}`;return`textures/item/${outputFilename(i)}`};
 $("#s1").onclick=()=>sv(outputFilename(mat),blob(render(mat,1)));
