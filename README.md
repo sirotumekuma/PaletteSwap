@@ -32,25 +32,38 @@ npm run dist:win
 
 ## Windows版のリリースと自動更新
 
-配布先は [GitHub Releases](https://github.com/sirotumekuma/PaletteSwap/releases) です。`dist:win` はインストーラーをPC内の `dist` フォルダーに作るだけで、GitHubには公開しません。GitHub Actionsで公開するには、次の手順で新しいバージョンのタグをPushします。
+配布先は [GitHub Releases](https://github.com/sirotumekuma/PaletteSwap/releases) です。普段のリリース作業は「変更をPush」「バージョンを上げてタグを作成」「タグをPush」の3段階です。タグをPushするとGitHub ActionsがWindows版をビルドしてReleaseに公開します。
 
-1. 変更をコミットしてGitHubにPushします。
-2. `package.json` と `package-lock.json` のバージョンを、公開済みの最新バージョンより大きい未使用の番号に上げます。パッチバージョンを上げる場合は次のコマンドを使えます。
+### いつものリリース手順
 
-   ```powershell
-   npm version patch --no-git-tag-version
-   ```
+PowerShellでプロジェクトのフォルダーを開いて作業します。最初にアプリの変更をコミットしてGitHubへPushしてください。`npm version` は作業中の変更を含めてバージョンコミットを作成するため、未コミットの変更がない状態にしてから実行します。
 
-3. バージョン変更をコミットしてGitHubにPushします。
-4. `package.json` と同じバージョンのタグを作成してPushします。たとえばバージョンが `1.0.9` の場合は次のとおりです。
+```powershell
+# 1. アプリの変更をコミットしてPush（変更内容に合わせてファイルを指定）
+git add <変更したファイル>
+git commit -m "変更内容を入力"
+git push origin main
 
-   ```powershell
-   git tag v1.0.9
-   git push origin v1.0.9
-   ```
+# 2. パッチバージョンを上げる（例: 1.0.10 → 1.0.11）
+# package.json と package-lock.json を更新し、コミットと v1.0.11 タグを作成
+npm version patch
 
-5. GitHubの **Actions** で `Release Windows app` が成功したことを確認します。成功すると [GitHub Releases](https://github.com/sirotumekuma/PaletteSwap/releases) に `PaletteSwap-Setup-<バージョン>.exe`、`latest.yml`、`.blockmap` が公開され、リリース説明もバージョンに合わせて設定されます。
+# 3. バージョンコミットとタグをGitHubへPush
+git push origin main --follow-tags
+```
 
-このワークフローはリポジトリの `GITHUB_TOKEN` を使ってリリースを作成するため、個人アクセストークンを発行・保存する必要はありません。Actionsの実行が権限エラーになる場合は、GitHubリポジトリの **Settings > Actions > General > Workflow permissions** で、ワークフローにContentsの書き込みを許可してください。
+これで公開処理が始まります。機能追加などで番号の上げ方を変えたい場合は、`npm version minor`（例: 1.0.10 → 1.1.0）または `npm version major`（例: 1.0.10 → 2.0.0）を使います。バージョン番号は`package.json`の値から自動で更新されるので、タグ名やRelease本文を手入力する必要はありません。
 
-アプリの自動更新は、インストーラー版が公開済みReleaseの `latest.yml` を確認して行います。ビルドしただけの `.exe` や、GitHubにPushしただけのソースコードは更新対象になりません。Releaseの公開後、インストール済みアプリは起動時に更新を確認して新版をダウンロードします。準備ができたら、画面上部の「再起動して更新」を押してください。開発版や `dist` 内のインストーラーでは自動更新されません。
+### 公開されたか確認する
+
+1. GitHubリポジトリの **Actions** タブを開き、`Release Windows app` の実行が成功（緑のチェック）したことを確認します。タグをPushしたのに実行が始まらないときは、Pushしたタグが `v1.2.3` のような形式か確認してください。
+2. [GitHub Releases](https://github.com/sirotumekuma/PaletteSwap/releases)を開き、新しいバージョンが表示されていることを確認します。Releaseには `PaletteSwap-Setup-<バージョン>.exe`、`latest.yml`、`.blockmap` が添付されます。
+3. 利用者に案内するのは `PaletteSwap-Setup-<バージョン>.exe` だけです。`latest.yml` と `.blockmap` は自動更新に必要なファイルなので、手動でダウンロード・配布する必要はありません。
+
+GitHub Actionsが権限エラーで失敗した場合は、リポジトリの **Settings > Actions > General > Workflow permissions** で、ワークフローにContentsの書き込みを許可してください。Releaseが作成済みなのに説明文だけ更新されない場合は、Actionsの実行ログで `Set release description` ステップのエラーを確認します。
+
+### 利用者側の更新方法
+
+Releaseが公開されると、インストーラー版のPaletteSwapは起動時に更新を確認し、新版を自動でダウンロードします。画面上部に「再起動して更新」と表示されたら、そのボタンを押すと更新が適用されます。すぐに更新したい場合は「更新を確認」を押してください。自動更新はインストーラー版で利用できます。開発版や`dist`フォルダーに作っただけの`.exe`は、GitHub Releaseへ公開されていないため自動更新されません。
+
+`npm run dist:win` はローカル確認用のインストーラーを`dist`フォルダーに作るコマンドです。GitHubへ公開するときは、上記の手順でバージョンタグをPushしてください。個人アクセストークンを作成する必要はありません。Actionsがリポジトリの`GITHUB_TOKEN`を使って公開します。
