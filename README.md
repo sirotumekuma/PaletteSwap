@@ -62,7 +62,7 @@ git push origin main --follow-tags
 
 GitHub Actionsが失敗した場合は、Actionsの実行を開き、赤い×のステップをクリックしてエラーを確認します。`Verify tag matches app version`で失敗した場合は、`package.json`のバージョンとタグ名を一致させてください。古いワークフローで`Validation Failed: already_exists (tag_name)`が出た場合は、Release作成時の競合が原因です。最新のワークフローを`main`にPushした後、下記の「既存Releaseの修復」を実行してください。
 
-このワークフローは最初にインストーラーをローカルでビルドし、その後GitHub CLIで`.exe`、`.blockmap`、`latest.yml`を順番にReleaseへアップロードします。これにより、ビルドツールがReleaseを同時に作成して`already_exists (tag_name)`になる競合を避けます。同じタグのReleaseが既にある場合は、そのReleaseのアセットを上書きして修復します。Release本文も同じ処理で設定します。
+このワークフローは最初にインストーラーをローカルでビルドし、その後GitHub CLIで`.exe`、`.blockmap`、`latest.yml`を順番にReleaseへアップロードします。これにより、ビルドツールがReleaseを同時に作成して`already_exis　ts (tag_name)`になる競合を避けます。GitHub APIでReleaseの存在を確認し、既存の場合はアセットを上書きして修復します。Release本文も同じ処理で設定します。
 
 ### 既存Releaseの修復
 
