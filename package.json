@@ -39,7 +39,10 @@
     ],
     "win": {
       "icon": "favicon.ico",
-      "target": "nsis"
+      "target": "nsis",
+      "releaseInfo": {
+        "releaseNotesFile": "release-notes.md"
+      }
     },
     "nsis": {
       "oneClick": false,

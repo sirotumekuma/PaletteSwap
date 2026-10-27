@@ -13,10 +13,10 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Check out tagged source
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: npm
@@ -31,39 +31,23 @@ jobs:
             throw "Git tag '$env:GITHUB_REF_NAME' does not match package.json version '$version'."
           }
 
+      - name: Generate release description
+        run: |
+          $version = node -p "require('./package.json').version"
+          $installer = "PaletteSwap-Setup-$version.exe"
+          $notes = @"
+          最新バージョンがリリースされると更新が自動で適用されます。
+
+          ### 利用方法
+          ${installer}をダウンロードしてください。
+          他のlatest.ymlや${installer}.blockmapのダウンロードは必要ありません。
+          ### 連絡方法
+          バグやご不明な点もしくは機能の追加希望がございましたらご気軽に外記フォームにてお問い合わせください
+          https://docs.google.com/forms/d/e/1FAIpQLSfz1x1dTCFkPVVFcw2cvsOC74Os19-x55G2kyr8PIGhZiHarg/viewform?usp=publish-editor
+          "@
+          Set-Content -Path release-notes.md -Value $notes -Encoding utf8NoBOM
+
       - name: Build and publish Windows installer
         run: npm run release:win
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Set release description
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const fs = require("node:fs");
-            const { version } = JSON.parse(fs.readFileSync("package.json", "utf8"));
-            const tag = process.env.RELEASE_TAG;
-            if (!tag) {
-              throw new Error("RELEASE_TAG is empty. The workflow must pass github.ref_name.");
-            }
-            const installer = `PaletteSwap-Setup-${version}.exe`;
-            const body = `最新バージョンがリリースされると更新が自動で適用されます。
-
-            ### 利用方法
-            ${installer}をダウンロードしてください。
-            他のlatest.ymlや${installer}.blockmapのダウンロードは必要ありません。
-            ### 連絡方法
-            バグやご不明な点もしくは機能の追加希望がございましたらご気軽に外記フォームにてお問い合わせください
-            https://docs.google.com/forms/d/e/1FAIpQLSfz1x1dTCFkPVVFcw2cvsOC74Os19-x55G2kyr8PIGhZiHarg/viewform?usp=publish-editor`;
-
-            const { data: release } = await github.rest.repos.getReleaseByTag({
-              ...context.repo,
-              tag
-            });
-            await github.rest.repos.updateRelease({
-              ...context.repo,
-              release_id: release.id,
-              body
-            });
-        env:
-          RELEASE_TAG: ${{ github.ref_name }}

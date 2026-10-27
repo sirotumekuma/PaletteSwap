@@ -60,7 +60,9 @@ git push origin main --follow-tags
 2. [GitHub Releases](https://github.com/sirotumekuma/PaletteSwap/releases)を開き、新しいバージョンが表示されていることを確認します。Releaseには `PaletteSwap-Setup-<バージョン>.exe`、`latest.yml`、`.blockmap` が添付されます。
 3. 利用者に案内するのは `PaletteSwap-Setup-<バージョン>.exe` だけです。`latest.yml` と `.blockmap` は自動更新に必要なファイルなので、手動でダウンロード・配布する必要はありません。
 
-GitHub Actionsが失敗した場合は、Actionsの実行を開き、赤い×のステップをクリックしてエラーを確認します。`Verify tag matches app version`で失敗した場合は、`package.json`のバージョンとタグ名を一致させて、新しいバージョンでリリースしてください。権限エラーの場合は、リポジトリの **Settings > Actions > General > Workflow permissions** で、ワークフローにContentsの書き込みを許可します。
+GitHub Actionsが失敗した場合は、Actionsの実行を開き、赤い×のステップをクリックしてエラーを確認します。`Verify tag matches app version`で失敗した場合は、`package.json`のバージョンとタグ名を一致させて、新しいバージョンでリリースしてください。`Validation Failed: already_exists (tag_name)`が出た場合、そのタグのReleaseは既に作成されています。同じタグでReleaseを作り直さず、最新のワークフローを`main`にPushしてから、次の新しいバージョンで公開してください。既存Releaseの説明文を直す場合は、GitHub Releasesの編集画面で本文を更新します。
+
+Release本文は、インストーラーを作成・公開する時点で同時に設定します。後からReleaseを再編集する処理はありません。GitHub ActionsのNode.js 20警告が表示された場合は、リポジトリのActionsワークフローが最新の`release-windows.yml`を使っていることを確認してください。権限エラーの場合は、リポジトリの **Settings > Actions > General > Workflow permissions** で、ワークフローにContentsの書き込みを許可します。
 
 ### 利用者側の更新方法
 
