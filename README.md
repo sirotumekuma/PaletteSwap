@@ -56,11 +56,11 @@ git push origin main --follow-tags
 
 ### 公開されたか確認する
 
-1. GitHubリポジトリの **Actions** タブを開き、`Release Windows app` の実行が成功（緑のチェック）したことを確認します。タグをPushしたのに実行が始まらないときは、Pushしたタグが `v1.2.3` のような形式か確認してください。
+1. GitHubリポジトリの **Actions** タブを開き、`Release Windows app` の実行が成功（緑のチェック）したことを確認します。タグは`v1.2.3`の形式にし、タグの数字と`package.json`の`version`を一致させてください。一致していない場合、Actionsはインストーラーを作る前にエラーを表示します。
 2. [GitHub Releases](https://github.com/sirotumekuma/PaletteSwap/releases)を開き、新しいバージョンが表示されていることを確認します。Releaseには `PaletteSwap-Setup-<バージョン>.exe`、`latest.yml`、`.blockmap` が添付されます。
 3. 利用者に案内するのは `PaletteSwap-Setup-<バージョン>.exe` だけです。`latest.yml` と `.blockmap` は自動更新に必要なファイルなので、手動でダウンロード・配布する必要はありません。
 
-GitHub Actionsが権限エラーで失敗した場合は、リポジトリの **Settings > Actions > General > Workflow permissions** で、ワークフローにContentsの書き込みを許可してください。Releaseが作成済みなのに説明文だけ更新されない場合は、Actionsの実行ログで `Set release description` ステップのエラーを確認します。
+GitHub Actionsが失敗した場合は、Actionsの実行を開き、赤い×のステップをクリックしてエラーを確認します。`Verify tag matches app version`で失敗した場合は、`package.json`のバージョンとタグ名を一致させて、新しいバージョンでリリースしてください。権限エラーの場合は、リポジトリの **Settings > Actions > General > Workflow permissions** で、ワークフローにContentsの書き込みを許可します。
 
 ### 利用者側の更新方法
 
