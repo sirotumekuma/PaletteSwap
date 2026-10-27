@@ -4,16 +4,30 @@ on:
   push:
     tags:
       - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "既存Releaseを修復する場合はタグ（例: v1.0.13）"
+        required: true
+        type: string
 
 permissions:
   contents: write
 
+concurrency:
+  group: release-${{ inputs.release_tag || github.ref_name }}
+  cancel-in-progress: false
+
 jobs:
   release:
     runs-on: windows-latest
+    env:
+      RELEASE_TAG: ${{ inputs.release_tag || github.ref_name }}
     steps:
-      - name: Check out tagged source
+      - name: Check out release source
         uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.release_tag || github.ref }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v5
@@ -27,14 +41,14 @@ jobs:
       - name: Verify tag matches app version
         run: |
           $version = node -p "require('./package.json').version"
-          if ("v$version" -ne $env:GITHUB_REF_NAME) {
-            throw "Git tag '$env:GITHUB_REF_NAME' does not match package.json version '$version'."
+          if ("v$version" -ne $env:RELEASE_TAG) {
+            throw "Release tag '$env:RELEASE_TAG' does not match package.json version '$version'."
           }
+          "APP_VERSION=$version" >> $env:GITHUB_ENV
 
       - name: Generate release description
         run: |
-          $version = node -p "require('./package.json').version"
-          $installer = "PaletteSwap-Setup-$version.exe"
+          $installer = "PaletteSwap-Setup-$env:APP_VERSION.exe"
           $notes = @"
           最新バージョンがリリースされると更新が自動で適用されます。
 
@@ -47,7 +61,31 @@ jobs:
           "@
           Set-Content -Path release-notes.md -Value $notes -Encoding utf8NoBOM
 
-      - name: Build and publish Windows installer
-        run: npm run release:win
+      - name: Build Windows installer
+        run: npm run dist:win -- --publish never
+
+      - name: Upload installer and update files
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $installer = "dist/PaletteSwap-Setup-$env:APP_VERSION.exe"
+          $files = @($installer, "$installer.blockmap", "dist/latest.yml")
+          foreach ($file in $files) {
+            if (-not (Test-Path $file)) {
+              throw "Expected release file was not created: $file"
+            }
+          }
+
+          gh release view $env:RELEASE_TAG --json tagName 2>$null | Out-Null
+          if ($LASTEXITCODE -eq 0) {
+            gh release upload $env:RELEASE_TAG @files --clobber
+            if ($LASTEXITCODE -ne 0) {
+              throw "Failed to upload release assets."
+            }
+            gh release edit $env:RELEASE_TAG --title $env:APP_VERSION --notes-file release-notes.md --latest
+          } else {
+            gh release create $env:RELEASE_TAG @files --title $env:APP_VERSION --notes-file release-notes.md --latest
+          }
+          if ($LASTEXITCODE -ne 0) {
+            throw "Failed to publish the GitHub Release."
+          }

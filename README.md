@@ -60,9 +60,20 @@ git push origin main --follow-tags
 2. [GitHub Releases](https://github.com/sirotumekuma/PaletteSwap/releases)を開き、新しいバージョンが表示されていることを確認します。Releaseには `PaletteSwap-Setup-<バージョン>.exe`、`latest.yml`、`.blockmap` が添付されます。
 3. 利用者に案内するのは `PaletteSwap-Setup-<バージョン>.exe` だけです。`latest.yml` と `.blockmap` は自動更新に必要なファイルなので、手動でダウンロード・配布する必要はありません。
 
-GitHub Actionsが失敗した場合は、Actionsの実行を開き、赤い×のステップをクリックしてエラーを確認します。`Verify tag matches app version`で失敗した場合は、`package.json`のバージョンとタグ名を一致させて、新しいバージョンでリリースしてください。`Validation Failed: already_exists (tag_name)`が出た場合、そのタグのReleaseは既に作成されています。同じタグでReleaseを作り直さず、最新のワークフローを`main`にPushしてから、次の新しいバージョンで公開してください。既存Releaseの説明文を直す場合は、GitHub Releasesの編集画面で本文を更新します。
+GitHub Actionsが失敗した場合は、Actionsの実行を開き、赤い×のステップをクリックしてエラーを確認します。`Verify tag matches app version`で失敗した場合は、`package.json`のバージョンとタグ名を一致させてください。古いワークフローで`Validation Failed: already_exists (tag_name)`が出た場合は、Release作成時の競合が原因です。最新のワークフローを`main`にPushした後、下記の「既存Releaseの修復」を実行してください。
 
-Release本文は、インストーラーを作成・公開する時点で同時に設定します。後からReleaseを再編集する処理はありません。GitHub ActionsのNode.js 20警告が表示された場合は、リポジトリのActionsワークフローが最新の`release-windows.yml`を使っていることを確認してください。権限エラーの場合は、リポジトリの **Settings > Actions > General > Workflow permissions** で、ワークフローにContentsの書き込みを許可します。
+このワークフローは最初にインストーラーをローカルでビルドし、その後GitHub CLIで`.exe`、`.blockmap`、`latest.yml`を順番にReleaseへアップロードします。これにより、ビルドツールがReleaseを同時に作成して`already_exists (tag_name)`になる競合を避けます。同じタグのReleaseが既にある場合は、そのReleaseのアセットを上書きして修復します。Release本文も同じ処理で設定します。
+
+### 既存Releaseの修復
+
+Releaseページはあるのに`.exe`や`latest.yml`がない場合は、同じバージョンを新しく作る必要はありません。修正版のワークフローを`main`へPushした後、GitHubの **Actions** タブから次の手順で既存Releaseを修復します。
+
+1. 左側で`Release Windows app`を選び、**Run workflow**を押します。
+2. ブランチは`main`を選択し、`release_tag`に修復するタグを入力します（例: `v1.0.13`）。
+3. **Run workflow**を押し、実行が成功するまで待ちます。
+4. 対応するReleaseを開き、`.exe`、`.blockmap`、`latest.yml`が添付されたことを確認します。
+
+この手動実行では、指定タグのソースを使ってビルドし、既存Releaseのファイルを上書きします。`release_tag`とそのタグ内の`package.json`のバージョンが一致している必要があります。GitHub ActionsのNode.js 20警告が表示された場合は、`main`に最新の`release-windows.yml`がPush済みかを確認してください。権限エラーの場合は、リポジトリの **Settings > Actions > General > Workflow permissions** で、ワークフローにContentsの書き込みを許可します。
 
 ### 利用者側の更新方法
 
